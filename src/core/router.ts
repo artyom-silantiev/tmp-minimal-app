@@ -35,7 +35,7 @@ function getCtrlHandlerArgs(target: Object, key: string | symbol, req: express.R
   return resArgs;
 }
 
-function useController(controller: any, expressRouter: express.Router) {
+function useController(controller: any, expressRouter: express.Router, routePath: string) {
   const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
 
   function getExpressRouterHandler(method: Method) {
@@ -72,8 +72,6 @@ function useController(controller: any, expressRouter: express.Router) {
 
     const path = ctrlHandler.path;
 
-    console.log(ctrlHandler);
-
     const handler = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       try {
         const args = getCtrlHandlerArgs(ctrlHandler.target, ctrlHandler.key, req);
@@ -88,6 +86,8 @@ function useController(controller: any, expressRouter: express.Router) {
       }
     }
     expressHandler.apply(expressRouter, [path, handler]);
+
+    console.log(`App route added: ${ctrlHandler.method} ${(routePath + path).replace('//', '/')}`);
   }
 }
 
@@ -104,9 +104,6 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
     }
 
     const routePath = path + route.path;
-
-    console.log('routePath', routePath);
-
     const expressRouter = express.Router();
 
     if (route.middlewares) {
@@ -116,7 +113,7 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
     }
 
     if (route.controller) {
-      useController(route.controller, expressRouter);
+      useController(route.controller, expressRouter, routePath);
     }
 
     if (route.router) {

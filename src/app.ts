@@ -28,7 +28,7 @@ app.setRouter({
     {
       path: '',
       controller: new AppController(),
-    }
+    },
   ]
 });
 
