@@ -14,6 +14,15 @@ const config: webpack.Configuration = {
   },
   target: 'node',
   externals: [nodeWebpack()],
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+      },
+    ],
+  },
 };
 
 export default config;

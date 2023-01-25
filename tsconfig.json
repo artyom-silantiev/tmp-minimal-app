@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "target": "ES2022",
+    "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
     "strict": true,
-    "lib": ["ES2022"],
+    "lib": ["es7"],
     "noImplicitAny": false
   },
   "exclude": ["node_modules"],
