@@ -70,7 +70,7 @@ app.setRouter({
       path: 'guarded',
       middlewares: [
         (req, res, next) => {
-          if (!req.headers.authorization || req.headers.authorization !== `bearer ${accessToken}`) {
+          if (!req.headers.authorization || req.headers.authorization.toLocaleLowerCase() !== `bearer ${accessToken}`) {
             throw new HttpException('403', 403);
           }
           next();
