@@ -1,5 +1,5 @@
 import { validate } from "class-validator";
-import { HttpExseption } from "./catch_error";
+import { HttpException } from "./catch_error";
 
 type Class<T = any> = new (...args: any[]) => T;
 
@@ -28,7 +28,7 @@ export async function validateDto<T>(data: any, Dto: Class<T>) {
       }
     }
 
-    throw new HttpExseption(validateErrors, 422);
+    throw new HttpException(validateErrors, 422);
   }
 
   return validateObject as T;

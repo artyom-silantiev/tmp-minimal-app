@@ -1,13 +1,13 @@
-import express from 'express';
 import bodyParser from 'body-parser';
 import { Applaction } from "./core/applaction";
-import { Controller, Get, Post } from "./core/controller";
+import { Controller, Get } from "./core/controller";
 import { Ctx } from './core/router';
-import { HttpExseption } from './core/catch_error';
+import { HttpException } from './core/catch_error';
 import { IsString } from 'class-validator';
 import { validateDto } from './core/validate';
 
 const port = 3000;
+const accessToken = 'AWESOME-9000!';
 
 class LoginDto {
   @IsString()
@@ -22,7 +22,7 @@ class AppController {
   @Get()
   index(ctx: Ctx) {
     if (ctx.query['name']) {
-      return `Hello, ${ctx.req.query['name']}!`
+      return `Hello, ${ctx.query['name']}!`
     } else {
       return 'Hello, world!';
     }
@@ -35,7 +35,7 @@ class AppController {
 
   @Get('throw')
   getThrow(ctx: Ctx) {
-    throw new HttpExseption({
+    throw new HttpException({
       badError: 'WTF!',
       status: 'emmm... mb 400?!'
     }, 400);
@@ -47,9 +47,9 @@ class AppController {
 
     console.log('body', body);
 
-    ctx.res.json({
-      accessToken: 'AWESOME 9000!'
-    });
+    return {
+      accessToken,
+    };
   }
 }
 
@@ -66,6 +66,30 @@ app.setRouter({
       path: '',
       controller: new AppController(),
     },
+    {
+      path: 'guarded',
+      middlewares: [
+        (req, res, next) => {
+          if (!req.headers.authorization || req.headers.authorization !== accessToken) {
+            throw new HttpException('403', 403);
+          }
+          next();
+        }
+      ],
+      ctxHandlers: [
+        {
+          path: 'user',
+          method: 'GET',
+          handler: () => {
+            return {
+              id: 1337,
+              name: '<some name>',
+              email: 'some.name@example.com',
+            }
+          }
+        }
+      ]
+    }
   ]
 });
 

@@ -2,10 +2,19 @@ import express from 'express';
 import { ControllerHandler, Method, sControllerHandlers } from './controller';
 import _ from 'lodash';
 
+export type CtxHandler = (ctx: Ctx) => Promise<any> | any;
+export type RouteCtxHandler = {
+  path: string;
+  method: Method;
+  handler: CtxHandler;
+};
 export type ExpressMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void> | void;
+
 export type Route = {
   path: string;
   middlewares?: ExpressMiddleware[];
+
+  ctxHandlers?: RouteCtxHandler[];
   controller?: any;
   router?: Router;
   routes?: Route[];
@@ -26,47 +35,67 @@ function getCtx(req: express.Request, res: express.Response) {
   };
 }
 
-function useController(controller: any, expressRouter: express.Router, routePath: string) {
-  const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
+function getExpressRouterHandler(method: Method, expressRouter: express.Router,) {
+  let expressRouterHandler;
 
-  function getExpressRouterHandler(method: Method) {
-    let expressRouterHandler;
-
-    if (method === 'ALL') {
-      expressRouterHandler = expressRouter.all;
-    } else if (method === 'GET') {
-      expressRouterHandler = expressRouter.get;
-    } else if (method === 'HEAD') {
-      expressRouterHandler = expressRouter.head;
-    } else if (method === 'OPTIONS') {
-      expressRouterHandler = expressRouter.options;
-    } else if (method === 'PATCH') {
-      expressRouterHandler = expressRouter.patch;
-    } else if (method === 'POST') {
-      expressRouterHandler = expressRouter.post;
-    } else if (method === 'PUT') {
-      expressRouterHandler = expressRouter.put;
-    } else if (method === 'DELETE') {
-      expressRouterHandler = expressRouter.delete;
-    }
-
-    return expressRouterHandler;
+  if (method === 'ALL') {
+    expressRouterHandler = expressRouter.all;
+  } else if (method === 'GET') {
+    expressRouterHandler = expressRouter.get;
+  } else if (method === 'HEAD') {
+    expressRouterHandler = expressRouter.head;
+  } else if (method === 'OPTIONS') {
+    expressRouterHandler = expressRouter.options;
+  } else if (method === 'PATCH') {
+    expressRouterHandler = expressRouter.patch;
+  } else if (method === 'POST') {
+    expressRouterHandler = expressRouter.post;
+  } else if (method === 'PUT') {
+    expressRouterHandler = expressRouter.put;
+  } else if (method === 'DELETE') {
+    expressRouterHandler = expressRouter.delete;
   }
 
+  return expressRouterHandler;
+}
+
+function getCtxHandlersFromController(controller: any) {
+  const ctxHandlers = [] as RouteCtxHandler[];
+
+  const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
+
   for (const ctrlHandler of controllerHandlers) {
-    const expressHandler = getExpressRouterHandler(ctrlHandler.method);
     const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () => Promise<any> | any;
+    const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
 
-    if (!_.startsWith(ctrlHandler.path, '/') && ctrlHandler.path.length > 0) {
-      ctrlHandler.path = '/' + ctrlHandler.path;
+
+    ctxHandlers.push({
+      method: ctrlHandler.method,
+      path: ctrlHandler.path,
+      handler: ctxHandler
+    });
+  }
+
+  return ctxHandlers;
+}
+
+function useCtxHandlers(ctxHandlers: RouteCtxHandler[], expressRouter: express.Router, routePath: string) {
+  for (const ctxHandler of ctxHandlers) {
+    const expressHandler = getExpressRouterHandler(ctxHandler.method, expressRouter);
+
+    if (!_.startsWith(ctxHandler.path, '/') && ctxHandler.path.length > 0) {
+      ctxHandler.path = '/' + ctxHandler.path;
     }
-
-    const path = ctrlHandler.path;
+    const path = ctxHandler.path;
 
     const handler = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       try {
-        const args = [getCtx(req, res)];
-        const resData = await controllerHandler.apply(ctrlHandler.target, args as []);
+        const ctx = getCtx(req, res);
+
+        const resData = await ctxHandler.handler(ctx);
+        if (typeof resData === 'undefined') {
+          return;
+        }
         if (typeof resData === 'string') {
           res.send(resData);
         } else {
@@ -78,7 +107,7 @@ function useController(controller: any, expressRouter: express.Router, routePath
     }
     expressHandler.apply(expressRouter, [path, handler]);
 
-    console.log(`App route added: ${ctrlHandler.method} ${(routePath + path).replace('//', '/')}`);
+    console.log(`route added: ${ctxHandler.method} ${(routePath + path).replace('//', '/')}`);
   }
 }
 
@@ -103,8 +132,13 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
       }
     }
 
+    if (route.ctxHandlers) {
+      useCtxHandlers(route.ctxHandlers, expressRouter, routePath);
+    }
+
     if (route.controller) {
-      useController(route.controller, expressRouter, routePath);
+      const ctxHandlers = getCtxHandlersFromController(route.controller);
+      useCtxHandlers(ctxHandlers, expressRouter, routePath);
     }
 
     if (route.router) {

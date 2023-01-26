@@ -1,13 +1,13 @@
 import express from 'express';
 
-export class HttpExseption extends Error {
+export class HttpException extends Error {
   constructor(public message: string | any, public status: number) {
     super();
   }
 }
 
 export function catchError(err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
-  if (err instanceof HttpExseption) {
+  if (err instanceof HttpException) {
     res.status(err.status)
 
     if (typeof err.message === 'string') {
