@@ -1,5 +1,5 @@
 import express from 'express';
-import { Router, parseRouter } from "./router";
+import { Router, parseRouter, Route } from "./router";
 import 'reflect-metadata';
 import { catchError } from './catch_error';
 
@@ -9,6 +9,10 @@ export class Applaction {
 
   setRouter(router: Router) {
     this.router = Object.assign(new Router, router);
+  }
+
+  setRoutes(routes: Route[]) {
+    this.router = Object.assign(new Router, { routes });
   }
 
   upgrade(upgrade: (app: express.Application) => void) {

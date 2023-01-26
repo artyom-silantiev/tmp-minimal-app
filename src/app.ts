@@ -67,33 +67,31 @@ function AuthGuard(ctx: Ctx) {
   ctx.next();
 }
 
-app.setRouter({
-  routes: [
-    {
-      path: '',
-      controller: new AppController(),
-      routes: [
-        {
-          path: 'guarded',
-          middlewares: [AuthGuard],
-          ctxHandlers: [
-            {
-              path: 'user',
-              method: 'GET',
-              handler: (ctx) => {
-                return {
-                  id: 1337,
-                  name: '<some name>',
-                  email: 'some.name@example.com',
-                }
+app.setRoutes([
+  {
+    path: '',
+    controller: new AppController(),
+    routes: [
+      {
+        path: 'guarded',
+        middlewares: [AuthGuard],
+        ctxHandlers: [
+          {
+            path: 'user',
+            method: 'GET',
+            handler: (ctx) => {
+              return {
+                id: 1337,
+                name: '<some name>',
+                email: 'some.name@example.com',
               }
-            },
-          ]
-        }
-      ]
-    },
-  ]
-});
+            }
+          },
+        ]
+      }
+    ]
+  },
+]);
 
 app.listet(port, () => {
   console.log(`app listen port: ${port} `);
