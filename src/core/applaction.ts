@@ -1,21 +1,27 @@
 import express from 'express';
-import { parseRouter, Router } from "./router";
+import { Router, parseRouter } from "./router";
 import 'reflect-metadata';
+import { catchError } from './catch_error';
 
 export class Applaction {
+  private app = express();
   router = null as null | Router;
 
   setRouter(router: Router) {
-    this.router = router;
+    this.router = Object.assign(new Router, router);
+  }
+
+  upgrade(upgrade: (app: express.Application) => void) {
+    upgrade(this.app);
   }
 
   listet(port: number, cb?: () => void) {
-    const app = express();
-
     if (this.router) {
-      parseRouter(this.router, app);
+      parseRouter(this.router, this.app);
     }
 
-    app.listen(port, cb);
+    this.app.use(catchError);
+
+    this.app.listen(port, cb);
   }
 }

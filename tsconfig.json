@@ -4,12 +4,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "target": "es6",
-    "moduleResolution": "node",
-    "sourceMap": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
     "strict": true,
-    "lib": ["es7"],
-    "noImplicitAny": false
+    "sourceMap": true,
+    "target": "ES2021",
+    "moduleResolution": "node",
+    "lib": ["es7"]
   },
   "exclude": ["node_modules"],
   "ts-node": {

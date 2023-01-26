@@ -1,38 +1,29 @@
 import express from 'express';
-import { ControllerHandler, CtrlHandlerArgs, Method, sControllerHandlers, sCtrlHandlerArgs } from './controller';
+import { ControllerHandler, Method, sControllerHandlers } from './controller';
 import _ from 'lodash';
 
+export type ExpressMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void> | void;
 export type Route = {
   path: string;
-  middlewares?: ((req: express.Request, res: express.Response, next: express.NextFunction) => void)[];
+  middlewares?: ExpressMiddleware[];
   controller?: any;
   router?: Router;
-  subRoutes?: Route[];
+  routes?: Route[];
 };
 
-export type Router = {
-  routes: Route[];
+export class Router {
+  routes = [] as Route[];
 }
 
-function getCtrlHandlerArgs(target: Object, key: string | symbol, req: express.Request) {
-  const handlerArgs = Reflect.getMetadata(sCtrlHandlerArgs, target) as CtrlHandlerArgs;
-  if (!handlerArgs[key]) {
-    return [];
-  }
-
-  const resArgs = [] as any[];
-  const args = handlerArgs[key];
-  for (const arg of args) {
-    if (arg.type === 'Req') {
-      resArgs.push(req);
-    } else if (arg.type === 'Param') {
-      resArgs.push(arg.data ? req.params[arg.data] : req.params);
-    } else if (arg.type === 'Query') {
-      resArgs.push(arg.data ? req.query[arg.data] : req.query);
-    }
-  }
-
-  return resArgs;
+export type Ctx = ReturnType<typeof getCtx>;
+function getCtx(req: express.Request, res: express.Response) {
+  return {
+    body: req.body || null,
+    params: req.params || null,
+    query: req.query || null,
+    req,
+    res
+  };
 }
 
 function useController(controller: any, expressRouter: express.Router, routePath: string) {
@@ -74,7 +65,7 @@ function useController(controller: any, expressRouter: express.Router, routePath
 
     const handler = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       try {
-        const args = getCtrlHandlerArgs(ctrlHandler.target, ctrlHandler.key, req);
+        const args = [getCtx(req, res)];
         const resData = await controllerHandler.apply(ctrlHandler.target, args as []);
         if (typeof resData === 'string') {
           res.send(resData);
@@ -120,9 +111,9 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
       parseRouter(route.router, expressApp, routePath);
     }
 
-    if (route.subRoutes) {
+    if (route.routes) {
       parseRouter({
-        routes: route.subRoutes,
+        routes: route.routes,
       }, expressApp, routePath);
     }
 
