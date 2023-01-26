@@ -60,36 +60,38 @@ app.upgrade((app) => {
   app.use(bodyParser.urlencoded({ extended: false }));
 });
 
+function AuthGuard(ctx: Ctx) {
+  if (!ctx.headers.authorization || ctx.headers.authorization !== `Bearer ${accessToken}`) {
+    throw new HttpException('403', 403);
+  }
+  ctx.next();
+}
+
 app.setRouter({
   routes: [
     {
       path: '',
       controller: new AppController(),
-    },
-    {
-      path: 'guarded',
-      middlewares: [
-        (req, res, next) => {
-          if (!req.headers.authorization || req.headers.authorization.toLocaleLowerCase() !== `bearer ${accessToken}`) {
-            throw new HttpException('403', 403);
-          }
-          next();
-        }
-      ],
-      ctxHandlers: [
+      routes: [
         {
-          path: 'user',
-          method: 'GET',
-          handler: () => {
-            return {
-              id: 1337,
-              name: '<some name>',
-              email: 'some.name@example.com',
-            }
-          }
+          path: 'guarded',
+          middlewares: [AuthGuard],
+          ctxHandlers: [
+            {
+              path: 'user',
+              method: 'GET',
+              handler: (ctx) => {
+                return {
+                  id: 1337,
+                  name: '<some name>',
+                  email: 'some.name@example.com',
+                }
+              }
+            },
+          ]
         }
       ]
-    }
+    },
   ]
 });
 

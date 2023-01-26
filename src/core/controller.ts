@@ -1,5 +1,5 @@
 export const sController = Symbol('Controller');
-export type Method = 'ALL' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'DELETE';
+export type Method = 'USE' | 'ALL' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'DELETE';
 export type ControllerHandler = {
   method: Method;
   path: string;

@@ -4,18 +4,19 @@ import _ from 'lodash';
 
 export type CtxHandler = (ctx: Ctx) => Promise<any> | any;
 export type RouteCtxHandler = {
-  path: string;
+  path?: string;
   method: Method;
   handler: CtxHandler;
 };
-export type ExpressMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void> | void;
+export type Middleware = CtxHandler;
 
 export type Route = {
   path: string;
-  middlewares?: ExpressMiddleware[];
+  middlewares?: Middleware[];
 
   ctxHandlers?: RouteCtxHandler[];
   controller?: any;
+  controllers?: any[];
   router?: Router;
   routes?: Route[];
 };
@@ -25,20 +26,24 @@ export class Router {
 }
 
 export type Ctx = ReturnType<typeof getCtx>;
-function getCtx(req: express.Request, res: express.Response) {
+function getCtx(req: express.Request, res: express.Response, next: express.NextFunction) {
   return {
     body: req.body || null,
     params: req.params || null,
     query: req.query || null,
+    headers: req.headers || null,
     req,
-    res
+    res,
+    next
   };
 }
 
 function getExpressRouterHandler(method: Method, expressRouter: express.Router,) {
   let expressRouterHandler;
 
-  if (method === 'ALL') {
+  if (method === 'USE') {
+    expressRouterHandler = expressRouter.use;
+  } else if (method === 'ALL') {
     expressRouterHandler = expressRouter.all;
   } else if (method === 'GET') {
     expressRouterHandler = expressRouter.get;
@@ -81,39 +86,48 @@ function getCtxHandlersFromController(controller: any) {
 
 function useCtxHandlers(ctxHandlers: RouteCtxHandler[], expressRouter: express.Router, routePath: string) {
   for (const ctxHandler of ctxHandlers) {
-    const expressHandler = getExpressRouterHandler(ctxHandler.method, expressRouter);
-
-    if (!_.startsWith(ctxHandler.path, '/') && ctxHandler.path.length > 0) {
-      ctxHandler.path = '/' + ctxHandler.path;
-    }
-    const path = ctxHandler.path;
-
-    const handler = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      try {
-        const ctx = getCtx(req, res);
-
-        const resData = await ctxHandler.handler(ctx);
-        if (typeof resData === 'undefined') {
-          return;
-        }
-        if (typeof resData === 'string') {
-          res.send(resData);
-        } else {
-          res.json(resData);
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
-    expressHandler.apply(expressRouter, [path, handler]);
-
-    console.log(`route added: ${ctxHandler.method} ${(routePath + path).replace('//', '/')}`);
+    useRouteCtxHandler(ctxHandler, expressRouter, routePath);
   }
 }
 
-export function parseRouter(router: Router, expressApp: express.Application, path?: string) {
-  path = path || '';
+function useRouteCtxHandler(routeCtxHandler: RouteCtxHandler, expressRouter: express.Router, routePath: string) {
+  const expressHandler = getExpressRouterHandler(routeCtxHandler.method, expressRouter);
 
+  let path = '';
+  if (routeCtxHandler.path) {
+    if (!_.startsWith(routeCtxHandler.path, '/') && routeCtxHandler.path.length > 0) {
+      routeCtxHandler.path = '/' + routeCtxHandler.path;
+    }
+    path = routeCtxHandler.path;
+  }
+
+  const handler = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const ctx = getCtx(req, res, next);
+      const resData = await routeCtxHandler.handler(ctx);
+      if (typeof resData === 'undefined') {
+        return;
+      }
+      if (typeof resData === 'string') {
+        res.send(resData);
+      } else {
+        res.json(resData);
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  if (routeCtxHandler.method === 'USE') {
+    expressHandler.apply(expressRouter, [handler]);
+  } else {
+    expressHandler.apply(expressRouter, [path, handler]);
+  }
+
+  console.log(`${routeCtxHandler.method} ${(routePath + path).replace('//', '/')}`);
+}
+
+export function parseRouter(router: Router, app: express.Application | express.Router, path: string, level: number) {
   if (!_.startsWith(path, '/')) {
     path = '/' + path;
   }
@@ -123,12 +137,21 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
       route.path = route.path.substring(1);
     }
 
-    const routePath = path + route.path;
+    let appIsApp = true;
+    if (Object.getPrototypeOf(app) == express.Router) {
+      appIsApp = false;
+    }
     const expressRouter = express.Router();
+
+    const routePath = path + route.path;
+    console.log(`RouterPath:"${routePath}", deep:${level}`);
 
     if (route.middlewares) {
       for (const middleware of route.middlewares) {
-        expressRouter.use(middleware);
+        useRouteCtxHandler({
+          method: 'USE',
+          handler: middleware,
+        }, expressRouter, routePath);
       }
     }
 
@@ -141,16 +164,27 @@ export function parseRouter(router: Router, expressApp: express.Application, pat
       useCtxHandlers(ctxHandlers, expressRouter, routePath);
     }
 
+    if (route.controllers) {
+      for (const controller of route.controllers) {
+        const ctxHandlers = getCtxHandlersFromController(controller);
+        useCtxHandlers(ctxHandlers, expressRouter, routePath);
+      }
+    }
+
     if (route.router) {
-      parseRouter(route.router, expressApp, routePath);
+      parseRouter(route.router, expressRouter, routePath, level + 1);
     }
 
     if (route.routes) {
       parseRouter({
-        routes: route.routes,
-      }, expressApp, routePath);
+        routes: route.routes
+      }, expressRouter, routePath, level + 1);
     }
 
-    expressApp.use(routePath, expressRouter);
+    if (appIsApp) {
+      (app as express.Application).use(routePath, expressRouter);
+    } else {
+      (app as express.Router).use(routePath, expressRouter);
+    }
   }
 }

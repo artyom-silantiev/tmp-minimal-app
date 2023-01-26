@@ -17,10 +17,12 @@ export class Applaction {
 
   listet(port: number, cb?: () => void) {
     if (this.router) {
-      parseRouter(this.router, this.app);
+      parseRouter(this.router, this.app, '', 0);
     }
 
     this.app.use(catchError);
+
+    console.log();
 
     this.app.listen(port, cb);
   }
