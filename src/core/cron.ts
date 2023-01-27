@@ -36,6 +36,9 @@ export function Schedule(schedule: string) {
 
 function useSchedules(cronService: any) {
   const scheduleHandlers = Reflect.getMetadata(sScheduleHandlers, cronService) as ScheduleHandler[];
+  if (!scheduleHandlers || scheduleHandlers.length === 0) {
+    return;
+  }
 
   for (const scheduleHandler of scheduleHandlers) {
     const handler = scheduleHandler.target[scheduleHandler.key].bind(scheduleHandler.target) as () => Promise<void> | void;
@@ -77,6 +80,9 @@ export function QueueJob(delayMs: number) {
 
 function useQueueJobs(cronService: any) {
   const queueJobHandlers = Reflect.getMetadata(sQueueJobHandlers, cronService) as QueueJobHandler[];
+  if (!queueJobHandlers || queueJobHandlers.length === 0) {
+    return;
+  }
 
   for (const queueJobHandler of queueJobHandlers) {
     const handler = queueJobHandler.target[queueJobHandler.key].bind(queueJobHandler.target) as () => Promise<void> | void;
