@@ -16,7 +16,6 @@ async function bootstrap() {
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
-
   initAppRouter(app, routes);
   app.use(httpErrorCatch);
 

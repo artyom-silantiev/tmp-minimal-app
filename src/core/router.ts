@@ -208,9 +208,6 @@ function parseRoutes(
   }
 }
 
-export function initAppRouter(
-  app: express.Application | express.Router,
-  routes: Route[]
-) {
+export function initAppRouter(app: express.Application, routes: Route[]) {
   parseRoutes(app, routes, '', 0);
 }
