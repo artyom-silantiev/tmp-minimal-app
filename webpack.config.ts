@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import nodeWebpack from 'webpack-node-externals';
 import 'webpack-dev-server';
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 
 export default (env, argv) => {
   const mode = argv.mode;
@@ -11,6 +12,7 @@ export default (env, argv) => {
   const config = {
     entry: './src/main.ts',
     resolve: {
+      plugins: [new TsconfigPathsPlugin({})],
       extensions: ['.ts', '.js'],
     },
     output: {
@@ -24,7 +26,7 @@ export default (env, argv) => {
         {
           test: /\.ts$/,
           exclude: /node_modules/,
-          loader: "ts-loader",
+          loader: 'ts-loader',
         },
       ],
     },
