@@ -19,13 +19,13 @@ function bootstrap() {
 
   app.setRoutes(routes);
 
-  app.listet(env.NODE_PORT, () => {
+  app.listen(env.NODE_PORT, () => {
+    useCronService(new CronService);
+
     logger.debug('dev env used');
     logger.log('env: ', env);
     logger.log(`app listen port: ${env.NODE_PORT}`);
   });
-
-  useCronService(new CronService);
 }
 
 bootstrap();

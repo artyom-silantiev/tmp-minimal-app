@@ -19,7 +19,7 @@ export class Application {
     upgrade(this.app);
   }
 
-  listet(port: number, cb?: () => void) {
+  listen(port: number, cb?: () => void) {
     if (this.router) {
       parseRouter(this.router, this.app, '', 0);
     }
