@@ -1,8 +1,8 @@
-import { Cron, CronExpression, QueueJob, Schedule } from "./core/cron";
+import { Cron, ScheduleExpression, QueueJob, Schedule } from "./core/cron";
 
 @Cron()
 export class CronService {
-  // @Schedule(CronExpression.EVERY_30_SECONDS)
+  // @Schedule(ScheduleExpression.EVERY_30_SECONDS)
   scheduleHandler() {
     console.log('scheduleHandler');
   }
