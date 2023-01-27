@@ -6,9 +6,14 @@ export class HttpException extends Error {
   }
 }
 
-export function catchError(err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
+export function httpErrorCatch(
+  err: Error,
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   if (err instanceof HttpException) {
-    res.status(err.status)
+    res.status(err.status);
 
     if (typeof err.message === 'string') {
       res.json({
