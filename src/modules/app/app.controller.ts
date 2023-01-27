@@ -1,8 +1,8 @@
-import { IsString } from "class-validator";
-import { HttpException } from "./core/catch_error";
-import { Controller, Get } from "./core/controller";
-import { Ctx } from "./core/router";
-import { validateDto } from "./core/validator";
+import { IsString } from 'class-validator';
+import { Controller, Get } from '@core/controller';
+import { Ctx } from '@core/router';
+import { HttpException } from '@core/catch_error';
+import { validateDto } from '@core/validator';
 
 class LoginDto {
   @IsString()
@@ -17,7 +17,7 @@ export class AppController {
   @Get()
   index(ctx: Ctx) {
     if (ctx.query['name']) {
-      return `Hello, ${ctx.query['name']}!`
+      return `Hello, ${ctx.query['name']}!`;
     } else {
       return 'Hello, world!';
     }
@@ -30,10 +30,13 @@ export class AppController {
 
   @Get('throw')
   getThrow(ctx: Ctx) {
-    throw new HttpException({
-      badError: 'WTF!',
-      status: 'emmm... mb 400?!'
-    }, 400);
+    throw new HttpException(
+      {
+        badError: 'WTF!',
+        status: 'emmm... mb 400?!',
+      },
+      400
+    );
   }
 
   @Get('login')

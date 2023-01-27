@@ -1,10 +1,10 @@
 import bodyParser from 'body-parser';
 import { createAppLogger } from './app-logger';
-import { Application } from "./core/application";
+import { Application } from './core/application';
 import { useCronService } from './core/cron';
-import { CronService } from './cron.service';
 import { useEnv } from './env/env';
 import routes from './routes';
+import { AppModule } from 'modules/app/app.module';
 
 const logger = createAppLogger('App');
 
@@ -20,7 +20,7 @@ function bootstrap() {
   app.setRoutes(routes);
 
   app.listen(env.NODE_PORT, () => {
-    useCronService(new CronService);
+    useCronService(AppModule.cronService);
 
     logger.debug('dev env used');
     logger.log('env: ', env);

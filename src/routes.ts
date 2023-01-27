@@ -1,12 +1,12 @@
-import { AppController } from "./app.controller";
-import { Route } from "./core/router";
-import { AuthGuard } from "./guards";
-import { AppCtx } from "./types";
+import { Route } from './core/router';
+import { AuthGuard } from './guards';
+import { AppCtx } from './types';
+import { AppModule } from 'modules/app/app.module';
 
 export default [
   {
     path: 'api',
-    controller: new AppController(),
+    controller: AppModule.appController,
   },
   {
     path: 'api/guarded',
@@ -21,15 +21,15 @@ export default [
             id: user.id,
             name: user.name,
             email: user.email,
-          }
-        }
+          };
+        },
       },
-    ]
+    ],
   },
   {
     path: '',
     static: {
-      root: process.cwd() + '/public'
-    }
-  }
+      root: process.cwd() + '/public',
+    },
+  },
 ] as Route[];

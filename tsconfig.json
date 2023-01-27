@@ -10,7 +10,11 @@
     "sourceMap": true,
     "target": "ES2021",
     "moduleResolution": "node",
-    "lib": ["ES2021"]
+    "lib": ["ES2021"],
+    "baseUrl": "src",
+    "paths": {
+      "@core/*": ["core/*"]
+    }
   },
   "exclude": ["node_modules"],
   "ts-node": {
