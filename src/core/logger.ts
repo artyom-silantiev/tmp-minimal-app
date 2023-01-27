@@ -1,21 +1,18 @@
 import * as moment from 'moment';
 
 export class Logger {
-  constructor(private name: string = '') { }
+  constructor(public name: string = '') { }
 
-  private defPrefix() {
+  prefix() {
     return `${moment.utc().format('YYYY-MM-DD HH:mm:ss')}${this.name ? ` [${this.name}]` : ''
       }`;
   }
 
   log(...args: any) {
-    console.log(this.defPrefix(), ...args);
-  }
-  debug(...args: any) {
-    console.log(this.defPrefix(), ...args);
+    console.log(this.prefix(), ...args);
   }
   error(...args: any) {
-    console.error(this.defPrefix(), ...args);
+    console.error(this.prefix(), ...args);
   }
 }
 
