@@ -5,7 +5,7 @@ import { useEnv } from './env/env';
 import routes from './routes';
 import { AppModule } from 'modules/app/app.module';
 import express from 'express';
-import { initAppRouter, Router } from '@core/router';
+import { initAppRouter } from '@core/router';
 import { httpErrorCatch } from '@core/catch_error';
 
 const logger = createAppLogger('App');

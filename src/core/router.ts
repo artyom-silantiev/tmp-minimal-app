@@ -29,14 +29,6 @@ export type Route = {
   static?: StaticOptions;
 };
 
-export class Router {
-  routes = [] as Route[];
-
-  constructor(routes: Route[]) {
-    this.routes = routes;
-  }
-}
-
 export type Ctx = ReturnType<typeof getCtx>;
 function getCtx(
   req: express.Request,
