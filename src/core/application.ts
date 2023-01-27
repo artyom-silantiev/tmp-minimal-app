@@ -3,7 +3,7 @@ import { Router, parseRouter, Route } from "./router";
 import 'reflect-metadata';
 import { catchError } from './catch_error';
 
-export class Applaction {
+export class Application {
   private app = express();
   router = null as null | Router;
 

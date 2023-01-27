@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser';
 import { createAppLogger } from './app-logger';
-import { Applaction } from "./core/applaction";
+import { Application } from "./core/application";
 import { useCronService } from './core/cron';
 import { CronService } from './cron.service';
 import { useEnv } from './env/env';
@@ -10,7 +10,7 @@ const logger = createAppLogger('App');
 
 function bootstrap() {
   const env = useEnv();
-  const app = new Applaction();
+  const app = new Application();
 
   app.upgrade((app) => {
     app.use(bodyParser.json());
