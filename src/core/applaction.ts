@@ -26,8 +26,6 @@ export class Applaction {
 
     this.app.use(catchError);
 
-    console.log();
-
     this.app.listen(port, cb);
   }
 }

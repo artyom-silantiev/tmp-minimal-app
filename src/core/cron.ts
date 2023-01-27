@@ -1,4 +1,7 @@
 import { CronJob } from 'cron';
+import { createLogger } from './logger';
+
+const logger = createLogger('Cron');
 
 // @Cron
 
@@ -41,12 +44,12 @@ function useSchedules(cronService: any) {
       try {
         await handler();
       } catch (error: any) {
-        console.log(`Queue job "${name}" errored: `);
-        console.error(error.stack ? error.stack : error);
+        logger.log(`Queue job "${name}" errored: `);
+        logger.error(error.stack ? error.stack : error);
       }
     }).start();
 
-    console.log(`Schedule started: ${name} => ${scheduleHandler.schedule}`);
+    logger.log(`Schedule started: ${name} => ${scheduleHandler.schedule}`);
   }
 }
 
@@ -83,14 +86,14 @@ function useQueueJobs(cronService: any) {
       try {
         await handler();
       } catch (error: any) {
-        console.log(`Queue job "${name}" errored: `);
-        console.error(error.stack ? error.stack : error);
+        logger.log(`Queue job "${name}" errored: `);
+        logger.error(error.stack ? error.stack : error);
       }
       setTimeout(queueHandle, queueJobHandler.delayMs);
     };
     setTimeout(queueHandle, queueJobHandler.delayMs);
 
-    console.log(`Queue job started: ${name} => ${queueJobHandler.delayMs}`);
+    logger.log(`Queue job started: ${name} => ${queueJobHandler.delayMs}`);
   }
 }
 
@@ -112,8 +115,6 @@ export enum CronExpression {
   EVERY_30_MINUTES = '0 */30 * * * *',
   EVERY_HOUR = '0 0-23/1 * * *',
   EVERY_WEEK = '0 0 * * 0',
-  EVERY_WEEKDAY = '0 0 * * 1-5',
-  EVERY_WEEKEND = '0 0 * * 6,0',
   EVERY_QUARTER = '0 0 1 */3 *',
   EVERY_6_MONTHS = '0 0 1 */6 *',
   EVERY_YEAR = '0 0 1 1 *',

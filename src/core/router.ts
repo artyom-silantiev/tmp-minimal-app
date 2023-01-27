@@ -1,6 +1,9 @@
 import express from 'express';
 import { getCtxHandlersFromController, Method } from './controller';
 import _ from 'lodash';
+import { createLogger } from './logger';
+
+const logger = createLogger('Router');
 
 export type CtxHandler = (ctx: Ctx | any) => Promise<any> | any;
 export type RouteCtxHandler = {
@@ -110,7 +113,7 @@ function useRouteCtxHandler(routeCtxHandler: RouteCtxHandler, expressRouter: exp
     expressHandler.apply(expressRouter, [path, handler]);
   }
 
-  console.log(`${routeCtxHandler.method} ${(routePath + path).replace('//', '/')}`);
+  logger.log(`${routeCtxHandler.method} ${(routePath + path).replace('//', '/')}`);
 }
 
 export function parseRouter(router: Router, app: express.Application | express.Router, path: string, level: number) {
@@ -130,7 +133,7 @@ export function parseRouter(router: Router, app: express.Application | express.R
     const expressRouter = express.Router();
 
     const routePath = path + route.path;
-    console.log(`RouterPath:"${routePath}", deep:${level}`);
+    logger.log(`RouterPath:"${routePath}", deep:${level}`);
 
     if (route.middlewares) {
       for (const middleware of route.middlewares) {
@@ -169,7 +172,7 @@ export function parseRouter(router: Router, app: express.Application | express.R
 
     if (route.static) {
       app.use(express.static(route.static.root));
-      console.log(`STATIC ${routePath} => ${route.static.root}`);
+      logger.log(`STATIC ${routePath} => ${route.static.root}`);
     }
 
     if (appIsApp) {
