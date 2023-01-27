@@ -189,7 +189,7 @@ export function parseRouter(router: Router, app: express.Application | express.R
 
     if (route.static) {
       app.use(express.static(route.static.root));
-      console.log('STATIC', routePath);
+      console.log(`STATIC ${routePath} => ${route.static.root}`);
     }
 
     if (appIsApp) {
