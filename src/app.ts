@@ -6,8 +6,10 @@ import { HttpException } from './core/catch_error';
 import { IsString } from 'class-validator';
 import { validateDto } from './core/validate';
 import { AppCtx } from './types';
+import { useEnv } from './env/env';
 
-const port = 3000;
+const env = useEnv();
+
 const accessToken = 'AWESOME-9000!';
 
 class LoginDto {
@@ -102,6 +104,6 @@ app.setRoutes([
   },
 ]);
 
-app.listet(port, () => {
-  console.log(`app listen port: ${port}`);
+app.listet(env.NODE_PORT, () => {
+  console.log(`app listen port: ${env.NODE_PORT}`);
 });

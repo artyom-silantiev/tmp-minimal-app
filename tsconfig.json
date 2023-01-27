@@ -10,7 +10,7 @@
     "sourceMap": true,
     "target": "ES2021",
     "moduleResolution": "node",
-    "lib": ["es7"]
+    "lib": ["ES2021"]
   },
   "exclude": ["node_modules"],
   "ts-node": {

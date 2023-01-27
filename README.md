@@ -1,8 +1,9 @@
 # TMP MINIMAL APP
 
-# install
+# deploy and install
 
 ```sh
+cp .env.default .env
 yarn
 ```
 

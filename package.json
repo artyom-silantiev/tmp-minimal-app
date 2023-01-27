@@ -12,6 +12,7 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "class-validator": "^0.14.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"
