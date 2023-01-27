@@ -19,7 +19,7 @@ const config: webpack.Configuration = {
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        loader: "babel-loader",
+        loader: "ts-loader",
       },
     ],
   },
