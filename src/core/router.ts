@@ -10,6 +10,10 @@ export type RouteCtxHandler = {
 };
 export type Middleware = CtxHandler;
 
+export type StaticOptions = {
+  root: string;
+};
+
 export type Route = {
   path: string;
   middlewares?: Middleware[];
@@ -19,6 +23,8 @@ export type Route = {
   controllers?: any[];
   subRouter?: Router;
   subRoutes?: Route[];
+
+  static?: StaticOptions;
 };
 
 export class Router {
@@ -179,6 +185,11 @@ export function parseRouter(router: Router, app: express.Application | express.R
       parseRouter({
         routes: route.subRoutes
       }, expressRouter, routePath, level + 1);
+    }
+
+    if (route.static) {
+      app.use(express.static(route.static.root));
+      console.log('STATIC', routePath);
     }
 
     if (appIsApp) {

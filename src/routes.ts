@@ -5,27 +5,31 @@ import { AppCtx } from "./types";
 
 export default [
   {
-    path: '',
+    path: 'api',
     controller: new AppController(),
-    subRoutes: [
+  },
+  {
+    path: 'api/guarded',
+    middlewares: [AuthGuard],
+    ctxHandlers: [
       {
-        path: 'guarded',
-        middlewares: [AuthGuard],
-        ctxHandlers: [
-          {
-            path: 'user',
-            method: 'GET',
-            handler: (ctx: AppCtx) => {
-              const user = ctx.req.user;
-              return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-              }
-            }
-          },
-        ]
-      }
+        path: 'user',
+        method: 'GET',
+        handler: (ctx: AppCtx) => {
+          const user = ctx.req.user;
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          }
+        }
+      },
     ]
   },
+  {
+    path: '',
+    static: {
+      root: process.cwd() + '/public'
+    }
+  }
 ] as Route[];
