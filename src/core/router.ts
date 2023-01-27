@@ -1,5 +1,5 @@
 import express from 'express';
-import { ControllerHandler, Method, sControllerHandlers } from './controller';
+import { getCtxHandlersFromController, Method } from './controller';
 import _ from 'lodash';
 
 export type CtxHandler = (ctx: Ctx | any) => Promise<any> | any;
@@ -68,26 +68,6 @@ function getExpressRouterHandler(method: Method, expressRouter: express.Router) 
   }
 
   return expressRouterHandler;
-}
-
-function getCtxHandlersFromController(controller: any) {
-  const ctxHandlers = [] as RouteCtxHandler[];
-
-  const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
-
-  for (const ctrlHandler of controllerHandlers) {
-    const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () => Promise<any> | any;
-    const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
-
-
-    ctxHandlers.push({
-      method: ctrlHandler.method,
-      path: ctrlHandler.path,
-      handler: ctxHandler
-    });
-  }
-
-  return ctxHandlers;
 }
 
 function useCtxHandlers(ctxHandlers: RouteCtxHandler[], expressRouter: express.Router, routePath: string) {

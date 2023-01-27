@@ -10,5 +10,5 @@ export type AppReq = express.Request & {
 };
 
 export type AppCtx = Ctx & {
-  req: AppReq
+  req: AppReq;
 };

@@ -2,7 +2,7 @@ import { IsString } from "class-validator";
 import { HttpException } from "./core/catch_error";
 import { Controller, Get } from "./core/controller";
 import { Ctx } from "./core/router";
-import { validateDto } from "./core/validate";
+import { validateDto } from "./core/validator";
 
 class LoginDto {
   @IsString()

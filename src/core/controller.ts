@@ -1,21 +1,24 @@
-export const sController = Symbol('Controller');
+// @Controller
 
+import { CtxHandler, RouteCtxHandler } from "./router";
+
+const sController = Symbol('Controller');
 export function Controller() {
   return function (target: Function) {
     Reflect.defineMetadata(sController, true, target);
   } as ClassDecorator;
 }
 
-// controller handlers
+// Controller methods decorators
 
+const sControllerHandlers = Symbol('ControllerHandlers');
 export type Method = 'USE' | 'ALL' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'DELETE';
-export type ControllerHandler = {
+type ControllerHandler = {
   method: Method;
   path: string;
   target: Object;
   key: string | symbol;
 };
-export const sControllerHandlers = Symbol('ControllerHandlers');
 
 function controllerHandler(method: Method, path: string) {
   return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor) {
@@ -60,4 +63,29 @@ export function Put(path: string = '') {
 
 export function Delete(path: string = '') {
   return controllerHandler('DELETE', path);
+}
+
+// controller metadata parser
+
+export function getCtxHandlersFromController(controller: Object) {
+  const ctxHandlers = [] as RouteCtxHandler[];
+
+  const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
+  if (!controllerHandlers || controllerHandlers.length === 0) {
+    return ctxHandlers;
+  }
+
+  for (const ctrlHandler of controllerHandlers) {
+    const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () => Promise<any> | any;
+    const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
+
+
+    ctxHandlers.push({
+      method: ctrlHandler.method,
+      path: ctrlHandler.path,
+      handler: ctxHandler
+    });
+  }
+
+  return ctxHandlers;
 }

@@ -1,5 +1,7 @@
 import bodyParser from 'body-parser';
 import { Applaction } from "./core/applaction";
+import { useCronService } from './core/cron';
+import { CronService } from './cron.service';
 import { useEnv } from './env/env';
 import routes from './routes';
 
@@ -17,6 +19,8 @@ function bootstrap() {
   app.listet(env.NODE_PORT, () => {
     console.log(`app listen port: ${env.NODE_PORT}`);
   });
+
+  useCronService(new CronService);
 }
 
 bootstrap();
