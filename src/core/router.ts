@@ -14,7 +14,6 @@ export type Route = {
   path: string;
   middlewares?: Middleware[];
 
-  ctxHandler?: RouteCtxHandler,
   ctxHandlers?: RouteCtxHandler[];
   controller?: any;
   controllers?: any[];
@@ -154,10 +153,6 @@ export function parseRouter(router: Router, app: express.Application | express.R
           handler: middleware,
         }, expressRouter, routePath);
       }
-    }
-
-    if (route.ctxHandler) {
-      useRouteCtxHandler(route.ctxHandler, expressRouter, routePath);
     }
 
     if (route.ctxHandlers) {

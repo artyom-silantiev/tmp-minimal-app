@@ -9,7 +9,7 @@ export default (env, argv) => {
   const isDev = !isProd;
 
   const config = {
-    entry: './src/app.ts',
+    entry: './src/main.ts',
     resolve: {
       extensions: ['.ts', '.js'],
     },

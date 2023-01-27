@@ -56,13 +56,6 @@ class AppController {
   }
 }
 
-const app = new Applaction();
-
-app.upgrade((app) => {
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
-});
-
 function AuthGuard(ctx: AppCtx) {
   if (!ctx.headers.authorization || ctx.headers.authorization !== `Bearer ${accessToken}`) {
     throw new HttpException('403', 403);
@@ -77,33 +70,44 @@ function AuthGuard(ctx: AppCtx) {
   ctx.next();
 }
 
-app.setRoutes([
-  {
-    path: '',
-    controller: new AppController(),
-    subRoutes: [
-      {
-        path: 'guarded',
-        middlewares: [AuthGuard],
-        ctxHandlers: [
-          {
-            path: 'user',
-            method: 'GET',
-            handler: (ctx: AppCtx) => {
-              const user = ctx.req.user;
-              return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-              }
-            }
-          },
-        ]
-      }
-    ]
-  },
-]);
+function bootstrap() {
+  const app = new Applaction();
 
-app.listet(env.NODE_PORT, () => {
-  console.log(`app listen port: ${env.NODE_PORT}`);
-});
+  app.upgrade((app) => {
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+  });
+
+  app.setRoutes([
+    {
+      path: '',
+      controller: new AppController(),
+      subRoutes: [
+        {
+          path: 'guarded',
+          middlewares: [AuthGuard],
+          ctxHandlers: [
+            {
+              path: 'user',
+              method: 'GET',
+              handler: (ctx: AppCtx) => {
+                const user = ctx.req.user;
+                return {
+                  id: user.id,
+                  name: user.name,
+                  email: user.email,
+                }
+              }
+            },
+          ]
+        }
+      ]
+    },
+  ]);
+
+  app.listet(env.NODE_PORT, () => {
+    console.log(`app listen port: ${env.NODE_PORT}`);
+  });
+}
+
+bootstrap();
