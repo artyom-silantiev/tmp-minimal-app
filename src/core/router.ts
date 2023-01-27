@@ -2,7 +2,7 @@ import express from 'express';
 import { ControllerHandler, Method, sControllerHandlers } from './controller';
 import _ from 'lodash';
 
-export type CtxHandler = (ctx: Ctx) => Promise<any> | any;
+export type CtxHandler = (ctx: Ctx | any) => Promise<any> | any;
 export type RouteCtxHandler = {
   path?: string;
   method: Method;
@@ -14,11 +14,12 @@ export type Route = {
   path: string;
   middlewares?: Middleware[];
 
+  ctxHandler?: RouteCtxHandler,
   ctxHandlers?: RouteCtxHandler[];
   controller?: any;
   controllers?: any[];
-  router?: Router;
-  routes?: Route[];
+  subRouter?: Router;
+  subRoutes?: Route[];
 };
 
 export class Router {
@@ -38,7 +39,7 @@ function getCtx(req: express.Request, res: express.Response, next: express.NextF
   };
 }
 
-function getExpressRouterHandler(method: Method, expressRouter: express.Router,) {
+function getExpressRouterHandler(method: Method, expressRouter: express.Router) {
   let expressRouterHandler;
 
   if (method === 'USE') {
@@ -155,6 +156,10 @@ export function parseRouter(router: Router, app: express.Application | express.R
       }
     }
 
+    if (route.ctxHandler) {
+      useRouteCtxHandler(route.ctxHandler, expressRouter, routePath);
+    }
+
     if (route.ctxHandlers) {
       useCtxHandlers(route.ctxHandlers, expressRouter, routePath);
     }
@@ -171,13 +176,13 @@ export function parseRouter(router: Router, app: express.Application | express.R
       }
     }
 
-    if (route.router) {
-      parseRouter(route.router, expressRouter, routePath, level + 1);
+    if (route.subRouter) {
+      parseRouter(route.subRouter, expressRouter, routePath, level + 1);
     }
 
-    if (route.routes) {
+    if (route.subRoutes) {
       parseRouter({
-        routes: route.routes
+        routes: route.subRoutes
       }, expressRouter, routePath, level + 1);
     }
 

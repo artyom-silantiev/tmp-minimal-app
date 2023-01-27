@@ -1,4 +1,13 @@
 export const sController = Symbol('Controller');
+
+export function Controller() {
+  return function (target: Function) {
+    Reflect.defineMetadata(sController, true, target);
+  } as ClassDecorator;
+}
+
+// controller handlers
+
 export type Method = 'USE' | 'ALL' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'DELETE';
 export type ControllerHandler = {
   method: Method;
@@ -7,11 +16,6 @@ export type ControllerHandler = {
   key: string | symbol;
 };
 export const sControllerHandlers = Symbol('ControllerHandlers');
-
-export function Controller() {
-  return function (target: Function) {
-  } as ClassDecorator;
-}
 
 function controllerHandler(method: Method, path: string) {
   return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor) {

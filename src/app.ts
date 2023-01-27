@@ -5,6 +5,7 @@ import { Ctx } from './core/router';
 import { HttpException } from './core/catch_error';
 import { IsString } from 'class-validator';
 import { validateDto } from './core/validate';
+import { AppCtx } from './types';
 
 const port = 3000;
 const accessToken = 'AWESOME-9000!';
@@ -60,10 +61,17 @@ app.upgrade((app) => {
   app.use(bodyParser.urlencoded({ extended: false }));
 });
 
-function AuthGuard(ctx: Ctx) {
+function AuthGuard(ctx: AppCtx) {
   if (!ctx.headers.authorization || ctx.headers.authorization !== `Bearer ${accessToken}`) {
     throw new HttpException('403', 403);
   }
+
+  ctx.req.user = {
+    id: '1337',
+    name: 'User',
+    email: 'user@this-app.io'
+  };
+
   ctx.next();
 }
 
@@ -71,7 +79,7 @@ app.setRoutes([
   {
     path: '',
     controller: new AppController(),
-    routes: [
+    subRoutes: [
       {
         path: 'guarded',
         middlewares: [AuthGuard],
@@ -79,11 +87,12 @@ app.setRoutes([
           {
             path: 'user',
             method: 'GET',
-            handler: (ctx) => {
+            handler: (ctx: AppCtx) => {
+              const user = ctx.req.user;
               return {
-                id: 1337,
-                name: '<some name>',
-                email: 'some.name@example.com',
+                id: user.id,
+                name: user.name,
+                email: user.email,
               }
             }
           },
@@ -94,5 +103,5 @@ app.setRoutes([
 ]);
 
 app.listet(port, () => {
-  console.log(`app listen port: ${port} `);
+  console.log(`app listen port: ${port}`);
 });
