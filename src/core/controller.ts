@@ -79,7 +79,6 @@ export function getCtxHandlersFromController(controller: Object) {
     const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () => Promise<any> | any;
     const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
 
-
     ctxHandlers.push({
       method: ctrlHandler.method,
       path: ctrlHandler.path,
