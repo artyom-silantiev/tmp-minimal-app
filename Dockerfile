@@ -9,6 +9,8 @@ RUN yarn
 
 COPY . .
 
+RUN yarn build
+
 EXPOSE 3000
 
-CMD ["sh", "_run_app.sh"]
+CMD ["yarn", "prod"]
