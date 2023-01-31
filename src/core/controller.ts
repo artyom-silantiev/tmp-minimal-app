@@ -1,6 +1,6 @@
 // @Controller
 
-import { CtxHandler, RouteCtxHandler } from "./router";
+import { CtxHandler, RouteCtxHandler } from './router';
 
 const sController = Symbol('Controller');
 export function Controller() {
@@ -12,7 +12,16 @@ export function Controller() {
 // Controller methods decorators
 
 const sControllerHandlers = Symbol('ControllerHandlers');
-export type Method = 'USE' | 'ALL' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'DELETE';
+export type Method =
+  | 'USE'
+  | 'ALL'
+  | 'GET'
+  | 'HEAD'
+  | 'OPTIONS'
+  | 'PATCH'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE';
 type ControllerHandler = {
   method: Method;
   path: string;
@@ -21,14 +30,24 @@ type ControllerHandler = {
 };
 
 function controllerHandler(method: Method, path: string) {
-  return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor) {
+  return function (
+    target: Object,
+    key: string | symbol,
+    descriptor: PropertyDescriptor
+  ) {
     if (!Reflect.hasMetadata(sControllerHandlers, target)) {
       Reflect.defineMetadata(sControllerHandlers, [], target);
     }
 
-    const controllerHandlers = Reflect.getMetadata(sControllerHandlers, target) as ControllerHandler[];
+    const controllerHandlers = Reflect.getMetadata(
+      sControllerHandlers,
+      target
+    ) as ControllerHandler[];
     controllerHandlers.push({
-      method, path, target, key
+      method,
+      path,
+      target,
+      key,
     });
   } as MethodDecorator;
 }
@@ -70,19 +89,24 @@ export function Delete(path: string = '') {
 export function getCtxHandlersFromController(controller: Object) {
   const ctxHandlers = [] as RouteCtxHandler[];
 
-  const controllerHandlers = Reflect.getMetadata(sControllerHandlers, controller) as ControllerHandler[];
+  const controllerHandlers = Reflect.getMetadata(
+    sControllerHandlers,
+    controller
+  ) as ControllerHandler[];
   if (!controllerHandlers || controllerHandlers.length === 0) {
     return ctxHandlers;
   }
 
   for (const ctrlHandler of controllerHandlers) {
-    const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () => Promise<any> | any;
+    const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () =>
+      | Promise<any>
+      | any;
     const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
 
     ctxHandlers.push({
       method: ctrlHandler.method,
       path: ctrlHandler.path,
-      handler: ctxHandler
+      handler: ctxHandler,
     });
   }
 

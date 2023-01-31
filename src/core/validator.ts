@@ -1,5 +1,5 @@
-import { validate } from "class-validator";
-import { HttpException } from "./catch_error";
+import { validate } from 'class-validator';
+import { HttpException } from './catch_error';
 
 type Class<T = any> = new (...args: any[]) => T;
 

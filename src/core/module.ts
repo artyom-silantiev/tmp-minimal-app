@@ -3,8 +3,8 @@ import { addModule } from './application';
 type LifecycleHandler = () => Promise<void> | void;
 type ModuleMeta = {
   items: any[];
-  onModuleInitHandler: LifecycleHandler | null;
-  onModuleDestroyHandler: LifecycleHandler | null;
+  initHandler: LifecycleHandler | null;
+  destroyHandler: LifecycleHandler | null;
 };
 export type ModuleWrap<T> = {
   moduleId: number;
@@ -20,10 +20,10 @@ function getModuleSetupCtx(meta: ModuleMeta) {
       return item;
     },
     onModuleInit(handler: LifecycleHandler) {
-      meta.onModuleInitHandler = handler;
+      meta.initHandler = handler;
     },
     onModuleDestroy(handler: LifecycleHandler) {
-      meta.onModuleDestroyHandler = handler;
+      meta.destroyHandler = handler;
     },
   };
 }
@@ -36,9 +36,9 @@ export function defineModule<T>(setup: ModuleSetup<T>) {
   const moduleId = modulesCount++;
   const meta = {
     items: [] as any[],
-    onModuleInitHandler: null as null | { (): Promise<void> },
-    onModuleDestroyHandler: null as null | { (): Promise<void> },
-  };
+    initHandler: null as null | { (): Promise<void> },
+    destroyHandler: null as null | { (): Promise<void> },
+  } as ModuleMeta;
   const moduleCtx = getModuleSetupCtx(meta);
   const moduleWrap = {
     moduleId,

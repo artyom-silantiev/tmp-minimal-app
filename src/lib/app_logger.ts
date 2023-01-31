@@ -1,5 +1,5 @@
-import { Logger } from "./core/logger";
-import { useEnv } from "./env/env";
+import { Logger } from '../core/logger';
+import { useEnv } from './env/env';
 
 const isDev = useEnv().isDevEnv();
 

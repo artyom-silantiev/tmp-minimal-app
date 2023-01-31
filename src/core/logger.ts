@@ -1,11 +1,12 @@
 import * as moment from 'moment';
 
 export class Logger {
-  constructor(public name: string = '') { }
+  constructor(public name: string = '') {}
 
   prefix() {
-    return `${moment.utc().format('YYYY-MM-DD HH:mm:ss')}${this.name ? ` [${this.name}]` : ''
-      }`;
+    return `${moment.utc().format('YYYY-MM-DD HH:mm:ss')}${
+      this.name ? ` [${this.name}]` : ''
+    }`;
   }
 
   log(...args: any) {

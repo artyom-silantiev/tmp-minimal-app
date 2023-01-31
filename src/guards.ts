@@ -1,5 +1,5 @@
-import { HttpException } from "./core/catch_error";
-import { AppCtx } from "./types";
+import { HttpException } from './core/catch_error';
+import { AppCtx } from './types';
 
 export function AuthGuard(ctx: AppCtx) {
   if (!ctx.headers.authorization) {
@@ -9,7 +9,7 @@ export function AuthGuard(ctx: AppCtx) {
   ctx.req.user = {
     id: '1337',
     name: 'User',
-    email: 'user@this-app.io'
+    email: 'user@this-app.io',
   };
 
   ctx.next();
