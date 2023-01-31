@@ -1,7 +1,7 @@
+import { AppModule } from 'app.module';
 import { Route } from './core/router';
 import { AuthGuard } from './guards';
 import { AppCtx } from './types';
-import { AppModule } from 'modules/app/app.module';
 
 export default [
   {
@@ -10,12 +10,12 @@ export default [
   },
   {
     path: 'api/guarded',
-    middlewares: [AuthGuard],
-    ctxHandlers: [
+    ctxMiddlewares: [AuthGuard],
+    handlers: [
       {
         path: 'user',
         method: 'GET',
-        handler: (ctx: AppCtx) => {
+        ctxHandler: (ctx: AppCtx) => {
           const user = ctx.req.user;
           return {
             id: user.id,

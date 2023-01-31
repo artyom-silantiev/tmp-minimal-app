@@ -1,6 +1,6 @@
 // @Controller
 
-import { CtxHandler, RouteCtxHandler } from './router';
+import { CtxHandler, RouteHandler } from './router';
 
 const sController = Symbol('Controller');
 export function Controller() {
@@ -87,7 +87,7 @@ export function Delete(path: string = '') {
 // controller metadata parser
 
 export function getCtxHandlersFromController(controller: Object) {
-  const ctxHandlers = [] as RouteCtxHandler[];
+  const ctxHandlers = [] as RouteHandler[];
 
   const controllerHandlers = Reflect.getMetadata(
     sControllerHandlers,
@@ -106,7 +106,7 @@ export function getCtxHandlersFromController(controller: Object) {
     ctxHandlers.push({
       method: ctrlHandler.method,
       path: ctrlHandler.path,
-      handler: ctxHandler,
+      ctxHandler: ctxHandler,
     });
   }
 

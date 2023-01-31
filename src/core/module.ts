@@ -1,4 +1,4 @@
-import { addModule } from './application';
+import { addAppModule } from './application';
 
 type LifecycleHandler = () => Promise<void> | void;
 type ModuleMeta = {
@@ -7,7 +7,7 @@ type ModuleMeta = {
   destroyHandler: LifecycleHandler | null;
 };
 export type ModuleWrap<T> = {
-  moduleId: number;
+  id: number;
   meta: ModuleMeta;
   module: T;
 };
@@ -34,19 +34,22 @@ export type ModuleSetup<T> = (ctx: ModuleSetupCtx) => T;
 let modulesCount = 0;
 export function defineModule<T>(setup: ModuleSetup<T>) {
   const moduleId = modulesCount++;
+
   const meta = {
     items: [] as any[],
     initHandler: null as null | { (): Promise<void> },
     destroyHandler: null as null | { (): Promise<void> },
   } as ModuleMeta;
+
   const moduleCtx = getModuleSetupCtx(meta);
+
   const moduleWrap = {
-    moduleId,
+    id: moduleId,
     meta,
     module: setup(moduleCtx),
-  };
+  } as ModuleWrap<T>;
 
-  addModule(moduleWrap);
+  addAppModule(moduleWrap);
 
   return moduleWrap.module;
 }
