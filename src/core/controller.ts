@@ -25,7 +25,6 @@ export type Method =
 type ControllerHandler = {
   method: Method;
   path: string;
-  target: Object;
   key: string | symbol;
 };
 
@@ -46,9 +45,10 @@ function controllerHandler(method: Method, path: string) {
     controllerHandlers.push({
       method,
       path,
-      target,
       key,
     });
+
+    return descriptor;
   } as MethodDecorator;
 }
 
@@ -98,10 +98,10 @@ export function getCtxHandlersFromController(controller: Object) {
   }
 
   for (const ctrlHandler of controllerHandlers) {
-    const controllerHandler = ctrlHandler.target[ctrlHandler.key] as () =>
+    const controllerHandler = controller[ctrlHandler.key] as () =>
       | Promise<any>
       | any;
-    const ctxHandler = controllerHandler.bind(ctrlHandler.target) as CtxHandler;
+    const ctxHandler = controllerHandler.bind(controller) as CtxHandler;
 
     ctxHandlers.push({
       method: ctrlHandler.method,
