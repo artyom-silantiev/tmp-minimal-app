@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import bodyParser from 'body-parser';
-import { createAppLogger } from './app-logger';
+import { createAppLogger } from './app_logger';
 import { useEnv } from './env/env';
 import routes from './routes';
 import express from 'express';
