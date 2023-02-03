@@ -1,6 +1,13 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as _ from 'lodash';
+import { shSync } from 'lib/sh';
+import * as fs from 'fs-extra';
+
+// set NODE_HOST if app running in docker container
+if (fs.existsSync('/.dockerenv')) {
+  process.env.NODE_HOST = shSync('hostname').replace('\n', '');
+}
 
 dotenv.config();
 
@@ -132,7 +139,7 @@ export function toArrayStrings(envParam: string, spliter: string, defaultValue: 
     try {
       const values = envParam.split(spliter);
       return values;
-    } catch (error) { }
+    } catch (error) {}
   }
   return defaultValue;
 }
