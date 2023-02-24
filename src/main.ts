@@ -5,7 +5,7 @@ import { useEnv } from './lib/env/env';
 import routes from './routes';
 import express from 'express';
 import { initAppRouter } from '@core/router';
-import { httpErrorCatch } from '@core/catch_error';
+import { catchHttpException } from '@core/catch_http_error';
 import { createApp } from '@core/application';
 
 const logger = createAppLogger('App');
@@ -20,7 +20,7 @@ createApp((ctx) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   initAppRouter(app, routes);
-  app.use(httpErrorCatch);
+  app.use(catchHttpException);
 
   ctx.onModuleInit(() => {
     app.listen(env.NODE_PORT, () => {

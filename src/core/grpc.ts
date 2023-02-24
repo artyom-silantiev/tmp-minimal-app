@@ -1,6 +1,8 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { resolve } from 'path';
+import { catchGrpcException } from './catch_grpc_error';
+import { camelToSnake } from './lib';
 import { createLogger } from './logger';
 
 export const sGrpcService = Symbol('sGrpcService');
@@ -8,9 +10,33 @@ type GrpcService = {
   serviceName: string;
   protoFile: string;
 };
-export function gRPC_Service(serviceName: string, protoFile: string) {
+export function gRPC_Service(params?: {
+  protoFileName?: string;
+  serviceName?: string;
+}) {
   return function (target: Function) {
-    protoFile = resolve(__dirname, '../../', 'grpc', protoFile);
+    params = params || {};
+
+    let serviceName = params.serviceName;
+    if (!serviceName) {
+      serviceName = target.name;
+    }
+
+    let protoFileName = params.protoFileName;
+    if (!protoFileName) {
+      let m = serviceName.match(/^(\w*)(Service){1}/);
+      if (m) {
+        protoFileName = camelToSnake(m[1]) + '.service';
+      } else {
+        protoFileName = camelToSnake(serviceName);
+      }
+    }
+
+    if (!protoFileName.endsWith('.proto')) {
+      protoFileName += '.proto';
+    }
+
+    const protoFile = resolve(__dirname, '../../', 'grpc', protoFileName);
 
     Reflect.defineMetadata(
       sGrpcService,
@@ -30,12 +56,22 @@ type GRPCall = {
   callName: string;
   key: string | symbol;
 };
-export function gRPC_Call(callName: string) {
+export function gRPC_Call(params?: { callName?: string }) {
   return function (
     target: Object,
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) {
+    params = params || {};
+    let callName: string;
+    if (params.callName) {
+      callName = params.callName;
+    } else if (typeof key === 'string') {
+      callName = key;
+    } else {
+      throw new Error('no value for call name');
+    }
+
     if (!Reflect.hasMetadata(sGrpcCall, target)) {
       Reflect.defineMetadata(sGrpcCall, [], target);
     }
@@ -105,8 +141,12 @@ function useGrpcService<T>(
   calls.forEach((call) => {
     callsHandlers[call.callName] = async function (req, callback) {
       const handler = service[call.key];
-      const res = await handler();
-      callback(null, res);
+      try {
+        const res = await handler(req.request, req.metadata.internalRepr);
+        callback(null, res);
+      } catch (error) {
+        catchGrpcException(error, callback);
+      }
     };
 
     logger.log(`use gRPC call ${call.callName} for service ${serviceName}`);

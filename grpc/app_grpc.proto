@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+service AppGrpc {
+    rpc callHello (Empty) returns (Reply) {}
+    rpc callPost (Data) returns (Reply) {}
+    rpc callThow (Empty) returns (Empty) {}
+}
+
+message Empty {}
+
+message Data {
+    string name = 1;
+}
+
+message Reply {
+   string message = 1;
+}
