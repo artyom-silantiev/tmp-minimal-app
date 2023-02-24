@@ -7,10 +7,12 @@
     "dev": "nodemon -r tsconfig-paths/register src/main.ts",
     "prod": "node dist/app.prod.js",
     "build:dev": "webpack --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=grpc/ts/ grpc/*.proto"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.8.10",
+    "@types/fs-extra": "^11.0.1",
     "body-parser": "^1.20.2",
     "class-validator": "^0.14.0",
     "cron": "^2.2.0",

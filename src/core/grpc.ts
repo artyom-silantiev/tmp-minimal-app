@@ -104,6 +104,9 @@ export function gRPC(params?: {
 let grpcServer: grpc.Server;
 let globalMiddlewares = [] as gRtcMiddleware[];
 const logger = createLogger('gRPC');
+export const protos = {} as {
+  [proto: string]: grpc.GrpcObject;
+};
 
 export function parseItemForGRPC(item: any) {
   const grpc = Reflect.getMetadata(
@@ -151,6 +154,8 @@ function useGrpcService<T>(
   const packageDefinition = protoLoader.loadSync(protoFile, options);
   const proto = grpc.loadPackageDefinition(packageDefinition) as any;
 
+  protos[protoFile.replace(/^.*\/(.*)$/, '$1')] = proto;
+
   logger.log(`use gRPC service ${serviceName}`);
 
   const callsHandlers = {};
@@ -172,7 +177,7 @@ function useGrpcService<T>(
 
       const handler = service[call.key];
       try {
-        const res = await handler(req.request, req.metadata.internalRepr);
+        const res = await handler(req, req.metadata.internalRepr);
         callback(null, res);
       } catch (error) {
         catchGrpcException(error, callback);

@@ -51,6 +51,9 @@ export class Env {
   NODE_APP_TYPE = NODE_APP_TYPE;
   NODE_ROLE = toEnum(E.NODE_ROLE, Object.values(NodeRole), NodeRole.MASTER) as NodeRole;
 
+  DIR_DATA = toPath(E.DIR_DATA, './data');
+  DIR_TEMP = toPath(E.DIR_TEMP, './temp');
+
   isDevEnv() {
     return this.NODE_ENV === NodeEnvType.development;
   }
