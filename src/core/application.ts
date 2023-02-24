@@ -1,3 +1,4 @@
+import { onAppStart, parseItemForGRPC } from './grpc';
 import { defineModule, ModuleSetup, ModuleWrap } from './module';
 
 const modules = [] as ModuleWrap<unknown>[];
@@ -22,7 +23,13 @@ export async function createApp<T>(setup: ModuleSetup<T>) {
         await moduleItem.onModuleInit();
       }
     }
+
+    moduleWrap.meta.items.forEach((item) => {
+      parseItemForGRPC(item);
+    });
   }
+
+  onAppStart();
 
   return appModule;
 }
