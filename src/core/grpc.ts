@@ -56,7 +56,7 @@ type GRPCall = {
   callName: string;
   key: string | symbol;
 };
-export function gRPC_Call(params?: { callName?: string }) {
+export function gRPC(params?: { callName?: string }) {
   return function (
     target: Object,
     key: string | symbol,
