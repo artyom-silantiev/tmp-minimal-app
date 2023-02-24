@@ -4,6 +4,7 @@ service AppGrpc {
     rpc hello (Data) returns (Reply) {}
     rpc throw (Empty) returns (Empty) {}
     rpc login (LoginRequest) returns (LoginResponce) {}
+    rpc getProfile (Empty) returns (Profile) {}
 }
 
 message Empty {}
@@ -23,4 +24,9 @@ message LoginRequest {
 
 message LoginResponce {
     string accessToken = 1;
+}
+
+message Profile {
+    string userId = 1;
+    string name = 2;
 }

@@ -1,18 +1,27 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { resolve } from 'path';
-import { catchGrpcException } from './catch_grpc_error';
+import { catchGrpcException } from './catch_rpc_error';
 import { camelToSnake } from './lib';
 import { createLogger } from './logger';
+
+export type gRtcMiddleware = {
+  (req: any, metadata: Map<string, any>): void;
+};
+export type RtcCallHandler = {
+  (req: any, metadata: Map<string, any>): any | Promise<any>;
+};
 
 export const sGrpcService = Symbol('sGrpcService');
 type GrpcService = {
   serviceName: string;
   protoFile: string;
+  middlewares?: gRtcMiddleware[];
 };
 export function gRPC_Service(params?: {
   protoFileName?: string;
   serviceName?: string;
+  middlewares?: gRtcMiddleware[];
 }) {
   return function (target: Function) {
     params = params || {};
@@ -38,14 +47,13 @@ export function gRPC_Service(params?: {
 
     const protoFile = resolve(__dirname, '../../', 'grpc', protoFileName);
 
-    Reflect.defineMetadata(
-      sGrpcService,
-      {
-        serviceName,
-        protoFile,
-      },
-      target
-    );
+    const gRpcServiceMeta = {
+      serviceName,
+      protoFile,
+      middlewares: params.middlewares || [],
+    } as GrpcService;
+
+    Reflect.defineMetadata(sGrpcService, gRpcServiceMeta, target);
   } as ClassDecorator;
 }
 
@@ -55,8 +63,12 @@ export const sGrpcCall = Symbol('gRPC_Call');
 type GRPCall = {
   callName: string;
   key: string | symbol;
+  middlewares?: gRtcMiddleware[];
 };
-export function gRPC(params?: { callName?: string }) {
+export function gRPC(params?: {
+  callName?: string;
+  middlewares?: gRtcMiddleware[];
+}) {
   return function (
     target: Object,
     key: string | symbol,
@@ -80,6 +92,7 @@ export function gRPC(params?: { callName?: string }) {
     calls.push({
       callName,
       key,
+      middlewares: params.middlewares || [],
     });
 
     return descriptor;
@@ -89,6 +102,7 @@ export function gRPC(params?: { callName?: string }) {
 //
 
 let grpcServer: grpc.Server;
+let globalMiddlewares = [] as gRtcMiddleware[];
 const logger = createLogger('gRPC');
 
 export function parseItemForGRPC(item: any) {
@@ -98,7 +112,7 @@ export function parseItemForGRPC(item: any) {
   ) as GrpcService;
   if (grpc) {
     const calls = Reflect.getMetadata(sGrpcCall, item);
-    useGrpcService(grpc.serviceName, grpc.protoFile, item, calls);
+    useGrpcService(grpc, item, calls);
   }
 }
 
@@ -116,8 +130,7 @@ export function onAppStart() {
 }
 
 function useGrpcService<T>(
-  serviceName: string,
-  protoFile: string,
+  grpcServiceMeta: GrpcService,
   service: any,
   calls: GRPCall[]
 ) {
@@ -132,6 +145,9 @@ function useGrpcService<T>(
     defaults: true,
     oneofs: true,
   };
+  const { protoFile, serviceName } = grpcServiceMeta;
+  const serviceMiddlewares = grpcServiceMeta.middlewares;
+
   const packageDefinition = protoLoader.loadSync(protoFile, options);
   const proto = grpc.loadPackageDefinition(packageDefinition) as any;
 
@@ -140,6 +156,20 @@ function useGrpcService<T>(
   const callsHandlers = {};
   calls.forEach((call) => {
     callsHandlers[call.callName] = async function (req, callback) {
+      try {
+        for (const middleware of globalMiddlewares) {
+          middleware(req.request, req.metadata.internalRepr);
+        }
+        for (const middleware of serviceMiddlewares as gRtcMiddleware[]) {
+          middleware(req.request, req.metadata.internalRepr);
+        }
+        for (const middleware of call.middlewares as gRtcMiddleware[]) {
+          middleware(req.request, req.metadata.internalRepr);
+        }
+      } catch (error) {
+        catchGrpcException(error, callback);
+      }
+
       const handler = service[call.key];
       try {
         const res = await handler(req.request, req.metadata.internalRepr);
@@ -153,4 +183,8 @@ function useGrpcService<T>(
   });
 
   grpcServer.addService(proto[serviceName].service, callsHandlers);
+}
+
+export function setGlobalRtcMiddlweares(middlewares: gRtcMiddleware[]) {
+  globalMiddlewares = middlewares;
 }
