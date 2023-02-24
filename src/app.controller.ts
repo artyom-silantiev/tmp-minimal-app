@@ -1,11 +1,12 @@
-import { IsString } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 import { Controller, Get } from '@core/controller';
 import { Ctx } from '@core/router';
 import { HttpException } from '@core/catch_http_error';
 import { validateDto } from '@core/validator';
 
-class LoginDto {
+export class LoginDto {
   @IsString()
+  @MinLength(5)
   login: string;
 
   @IsString()

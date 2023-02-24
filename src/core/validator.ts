@@ -3,6 +3,12 @@ import { HttpException } from './catch_http_error';
 
 type Class<T = any> = new (...args: any[]) => T;
 
+export class ValidateException extends Error {
+  constructor(public message: string | any) {
+    super();
+  }
+}
+
 export async function validateDto<T>(data: any, Dto: Class<T>) {
   const dto = new Dto();
   const validateObject = Object.assign(dto as any, data);
@@ -28,7 +34,7 @@ export async function validateDto<T>(data: any, Dto: Class<T>) {
       }
     }
 
-    throw new HttpException(validateErrors, 422);
+    throw new ValidateException(validateErrors);
   }
 
   return validateObject as T;

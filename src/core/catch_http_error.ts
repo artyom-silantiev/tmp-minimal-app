@@ -1,4 +1,5 @@
 import express from 'express';
+import { ValidateException } from './validator';
 
 export class HttpException extends Error {
   constructor(public message: string | any, public status: number) {
@@ -7,21 +8,25 @@ export class HttpException extends Error {
 }
 
 export function catchHttpException(
-  err: Error,
+  error: Error,
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) {
-  if (err instanceof HttpException) {
-    res.status(err.status);
+  if (error instanceof ValidateException) {
+    error = new HttpException(error.message, 422);
+  }
 
-    if (typeof err.message === 'string') {
+  if (error instanceof HttpException) {
+    res.status(error.status);
+
+    if (typeof error.message === 'string') {
       res.json({
-        status: err.status,
-        message: err.message,
+        status: error.status,
+        message: error.message,
       });
     } else {
-      res.json(err.message);
+      res.json(error.message);
     }
   } else {
     res.status(500).send('Something went wrong');

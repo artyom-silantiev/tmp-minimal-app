@@ -105,10 +105,10 @@ export function parseItemForGRPC(item: any) {
 export function onAppStart() {
   if (grpcServer) {
     grpcServer.bindAsync(
-      '127.0.0.1:50051',
+      '127.0.0.1:8080',
       grpc.ServerCredentials.createInsecure(),
       (error, port) => {
-        console.log('gRPC server running at http://127.0.0.1:50051');
+        console.log(`gRPC server running at http://127.0.0.1:${port}`);
         grpcServer.start();
       }
     );
