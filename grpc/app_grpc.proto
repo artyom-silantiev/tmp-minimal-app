@@ -1,10 +1,9 @@
 syntax = "proto3";
 
 service AppGrpc {
-    rpc callHello (Empty) returns (Reply) {}
-    rpc callPost (Data) returns (Reply) {}
-    rpc callThow (Empty) returns (Empty) {}
-    rpc callLogin (LoginRequest) returns (LoginResponce) {}
+    rpc hello (Data) returns (Reply) {}
+    rpc throw (Empty) returns (Empty) {}
+    rpc login (LoginRequest) returns (LoginResponce) {}
 }
 
 message Empty {}

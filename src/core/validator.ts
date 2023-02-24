@@ -1,6 +1,5 @@
 import { validate } from 'class-validator';
-
-type Class<T = any> = new (...args: any[]) => T;
+import { Class } from './types';
 
 export class ValidateException extends Error {
   constructor(public message: string | any) {

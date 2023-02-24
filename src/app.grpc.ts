@@ -6,21 +6,14 @@ import { LoginDto } from 'app.controller';
 @gRPC_Service()
 export class AppGrpc {
   @gRPC()
-  callHello() {
+  hello(req) {
     return {
-      message: 'Hello, gRPC!',
+      message: `Hello, ${req.name || 'World'}!`,
     };
   }
 
   @gRPC()
-  callPost(req) {
-    return {
-      message: `Hello, ${req.name}!`,
-    };
-  }
-
-  @gRPC()
-  callThow() {
+  throw() {
     throw new GrpcException(
       {
         msg: 'Bad news everone',
@@ -30,7 +23,7 @@ export class AppGrpc {
   }
 
   @gRPC()
-  async callLogin(req) {
+  async login(req) {
     const body = await validateDto(req, LoginDto);
 
     return {
