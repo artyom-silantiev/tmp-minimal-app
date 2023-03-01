@@ -88,7 +88,7 @@ function useGrpcService<T>(
           const res = await handler(req, req.metadata);
           callback(null, res);
         } else if (call.type === GrpcCallType.StreamMethod) {
-          // TODO
+          await handler(req, req.metadata);
         }
       } catch (error) {
         catchGrpcException(error, callback);

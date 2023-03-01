@@ -1,4 +1,9 @@
-import { GrpcMethod, GrpcService, GrpcStreamCall } from '@core/grpc/decorators';
+import {
+  GrpcMethod,
+  GrpcService,
+  GrpcStreamCall,
+  GrpcStreamMethod,
+} from '@core/grpc/decorators';
 import { createGrpcClient } from '@core/grpc/client';
 import { GrtcMiddleware } from '@core/grpc/types';
 
@@ -12,6 +17,7 @@ import { useEnv } from 'lib/env/env';
 import { AppGrpcClient } from '../grpc/ts/AppGrpc';
 import { holdBeforeFileExists } from 'lib';
 import { Stream } from 'stream';
+import { ChatMsg, ChatMsg__Output } from '../grpc/ts/ChatMsg';
 
 const env = useEnv();
 
@@ -71,7 +77,7 @@ export class AppGrpc {
   }
 
   @GrpcMethod()
-  async startUpload() {
+  async uploadFileTest() {
     const file = resolve(__dirname, '../', 'README.md');
 
     const res = await new Promise((resolve, reject) => {
@@ -101,7 +107,7 @@ export class AppGrpc {
     return res;
   }
 
-  @GrpcStreamCall({})
+  @GrpcStreamCall()
   async uploadFile(stream: Stream) {
     fs.mkdirsSync(env.DIR_TEMP);
     const tmp = resolve(env.DIR_TEMP, Date.now().toString());
@@ -134,5 +140,59 @@ export class AppGrpc {
     return {
       size: stat.size,
     };
+  }
+
+  @GrpcMethod()
+  async chatTest() {
+    const client = this.client.chat();
+
+    await new Promise((resolve, reject) => {
+      client.write({
+        msg: 1,
+      });
+      client.on('data', (chunk: ChatMsg__Output) => {
+        console.log('bbb chunk', chunk);
+
+        if (chunk.msg >= 10) {
+          resolve(true);
+        } else {
+          client.write({
+            msg: chunk.msg + 1,
+          });
+        }
+      });
+      client.on('error', (error) => {
+        reject(error);
+      });
+      client.on('end', () => {
+        console.log('bbb end');
+        resolve(true);
+      });
+    });
+
+    client.end();
+    console.log('client chat call end');
+  }
+
+  @GrpcStreamMethod()
+  async chat(client: grpc.ClientDuplexStream<ChatMsg, ChatMsg__Output>) {
+    await new Promise((resolve, reject) => {
+      client.on('data', (chunk: ChatMsg__Output) => {
+        console.log('aaa chunk', chunk);
+        client.write({
+          msg: chunk.msg + 1,
+        });
+      });
+      client.on('error', (error) => {
+        reject(error);
+      });
+      client.on('end', () => {
+        console.log('aaa end');
+        resolve(true);
+      });
+    });
+
+    client.end();
+    console.log('server chat method end');
   }
 }

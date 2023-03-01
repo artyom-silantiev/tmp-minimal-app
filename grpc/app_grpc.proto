@@ -5,8 +5,12 @@ service AppGrpc {
   rpc throw (Empty) returns (Empty) {}
   rpc login (LoginRequest) returns (LoginResponce) {}
   rpc getProfile (Empty) returns (Profile) {}
-  rpc startUpload(Empty) returns (UploadFileResponse) {};
+
+  rpc uploadFileTest(Empty) returns (UploadFileResponse) {};
   rpc uploadFile(stream UploadFileRequest) returns (UploadFileResponse) {};
+
+  rpc chatTest(Empty) returns (Empty) {};
+  rpc chat(stream ChatMsg) returns (stream ChatMsg) {};
 }
 
 message Empty {}
@@ -46,4 +50,8 @@ message FileInfo {
 
 message UploadFileResponse {
   uint32 size = 2;
+}
+
+message ChatMsg {
+  uint32 msg = 1;
 }
