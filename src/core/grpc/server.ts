@@ -28,7 +28,7 @@ export function parseItemForGRPC(item: any) {
 
 export function onAppStart() {
   if (grpcServer) {
-    const port = process.env.NODE_GRTC_PORT || '8080';
+    const port = process.env.NODE_PORT_GRTC || '8080';
     grpcServer.bindAsync(
       `127.0.0.1:${port}`,
       grpc.ServerCredentials.createInsecure(),
