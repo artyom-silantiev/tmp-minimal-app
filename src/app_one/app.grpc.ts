@@ -10,14 +10,14 @@ import { ProtoGrpcType as AppGrpcProto } from '#grpc/app_grpc';
 import { AppGrpcClient } from '#grpc/AppGrpc';
 import { ChatMsg, ChatMsg__Output } from '#grpc/ChatMsg';
 
-import { RpcException } from '@core/catch_rpc_error';
+import { GrpcException } from '@core/catch_grpc_error';
 import { validateDto } from '@core/validator';
-import { LoginDto } from '@/app_one/app.controller';
+import { LoginDto } from './app.controller';
 import * as grpc from '@grpc/grpc-js';
 import { resolve } from 'path';
 import * as fs from 'fs-extra';
 import { useEnv } from '@lib/env/env';
-import { holdBeforeFileExists } from '@/app_one/lib';
+import { holdBeforeFileExists } from './lib';
 import { Stream } from 'stream';
 
 const env = useEnv();
@@ -31,7 +31,7 @@ const rtcAuthGuard: GrpcMiddleware = (req, metadata: GrpcMetadata) => {
       name: 'Bob',
     });
   } else {
-    throw new RpcException('Forbidden', grpc.status.UNAUTHENTICATED);
+    throw new GrpcException('Forbidden', grpc.status.UNAUTHENTICATED);
   }
 };
 
@@ -53,7 +53,7 @@ export class AppGrpc {
 
   @GrpcMethod()
   throw() {
-    throw new RpcException(
+    throw new GrpcException(
       {
         msg: 'Bad news everone',
       },

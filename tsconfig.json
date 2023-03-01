@@ -13,7 +13,6 @@
     "lib": ["ES2021"],
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"],
       "@lib/*": ["lib/*"],
       "@core/*": ["core/*"],
       "#grpc/*": ["grpc/*"]

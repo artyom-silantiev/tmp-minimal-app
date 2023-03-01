@@ -1,7 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
 import { ValidateException } from './validator';
 
-export class RpcException extends Error {
+export class GrpcException extends Error {
   constructor(public message: string | any, public status: grpc.status) {
     super();
   }
@@ -12,10 +12,10 @@ export function catchGrpcException(
   callback: (err: any) => void
 ) {
   if (error instanceof ValidateException) {
-    error = new RpcException(error.message, grpc.status.INVALID_ARGUMENT);
+    error = new GrpcException(error.message, grpc.status.INVALID_ARGUMENT);
   }
 
-  if (error instanceof RpcException) {
+  if (error instanceof GrpcException) {
     if (typeof error.message === 'string') {
       callback({
         message: error.message,
