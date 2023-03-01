@@ -8,7 +8,7 @@
     "prod": "node dist/app.prod.js",
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=grpc/ts/ grpc/*.proto"
+    "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/grpc/ grpc/*.proto"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.8.10",

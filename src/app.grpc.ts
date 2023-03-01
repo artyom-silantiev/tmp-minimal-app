@@ -4,8 +4,11 @@ import {
   GrpcStreamCall,
   GrpcStreamMethod,
 } from '@core/grpc/decorators';
-import { createGrpcClient } from '@core/grpc/client';
+import { GrpcProto } from '@core/grpc/client';
 import { GrpcMetadata, GrpcMiddleware } from '@core/grpc/types';
+import { ProtoGrpcType as AppGrpcProto } from '#grpc/app_grpc';
+import { AppGrpcClient } from '#grpc/AppGrpc';
+import { ChatMsg, ChatMsg__Output } from '#grpc/ChatMsg';
 
 import { RpcException } from '@core/catch_rpc_error';
 import { validateDto } from '@core/validator';
@@ -14,10 +17,8 @@ import * as grpc from '@grpc/grpc-js';
 import { resolve } from 'path';
 import * as fs from 'fs-extra';
 import { useEnv } from 'lib/env/env';
-import { AppGrpcClient } from '../grpc/ts/AppGrpc';
 import { holdBeforeFileExists } from 'lib';
 import { Stream } from 'stream';
-import { ChatMsg, ChatMsg__Output } from '../grpc/ts/ChatMsg';
 
 const env = useEnv();
 
@@ -36,11 +37,12 @@ const rtcAuthGuard: GrpcMiddleware = (req, metadata: GrpcMetadata) => {
 
 @GrpcService()
 export class AppGrpc {
-  client = createGrpcClient<AppGrpcClient>(
-    'app_grpc.proto',
-    'AppGrpc',
-    'localhost:8080'
-  );
+  client: AppGrpcClient;
+
+  constructor() {
+    const proto = new GrpcProto<AppGrpcProto>('app_grpc.proto');
+    this.client = proto.getService<AppGrpcClient>('localhost:8080', 'AppGrpc');
+  }
 
   @GrpcMethod()
   hello(call) {
