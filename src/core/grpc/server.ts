@@ -3,7 +3,12 @@ import * as protoLoader from '@grpc/proto-loader';
 import { catchGrpcException } from '../catch_rpc_error';
 import { createLogger } from '../logger';
 import { sGrpcCall, sGrpcService } from './decorators';
-import { GRPCall, GrpcCallType, GrpcService, GrtcMiddleware } from './types';
+import {
+  GRPCall,
+  GrpcCallType,
+  GrpcServiceMeta,
+  GrtcMiddleware,
+} from './types';
 
 let grpcServer: grpc.Server;
 let globalMiddlewares = [] as GrtcMiddleware[];
@@ -13,7 +18,7 @@ export function parseItemForGRPC(item: any) {
   const grpc = Reflect.getMetadata(
     sGrpcService,
     item.constructor
-  ) as GrpcService;
+  ) as GrpcServiceMeta;
   if (grpc) {
     const calls = Reflect.getMetadata(sGrpcCall, item);
     useGrpcService(grpc, item, calls);
@@ -34,7 +39,7 @@ export function onAppStart() {
 }
 
 function useGrpcService<T>(
-  grpcServiceMeta: GrpcService,
+  grpcServiceMeta: GrpcServiceMeta,
   service: any,
   calls: GRPCall[]
 ) {

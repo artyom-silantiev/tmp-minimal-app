@@ -1,4 +1,4 @@
-import { GrpcMethod, gRpcService, GrpcStreamCall } from '@core/grpc/decorators';
+import { GrpcMethod, GrpcService, GrpcStreamCall } from '@core/grpc/decorators';
 import { createGrpcClient } from '@core/grpc/client';
 import { GrtcMiddleware } from '@core/grpc/types';
 
@@ -26,7 +26,7 @@ const rtcAuthGuard: GrtcMiddleware = (req, metadata: grpc.Metadata) => {
   }
 };
 
-@gRpcService()
+@GrpcService()
 export class AppGrpc {
   client = createGrpcClient<AppGrpcClient>(
     'app_grpc.proto',

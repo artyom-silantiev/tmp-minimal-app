@@ -1,9 +1,14 @@
 import { resolve } from 'path';
 import { camelToSnake } from '../lib';
-import { GRPCall, GrpcCallType, GrpcService, GrtcMiddleware } from './types';
+import {
+  GRPCall,
+  GrpcCallType,
+  GrpcServiceMeta,
+  GrtcMiddleware,
+} from './types';
 
 export const sGrpcService = Symbol('sGrpcService');
-export function gRpcService(params?: {
+export function GrpcService(params?: {
   protoFileName?: string;
   serviceName?: string;
   middlewares?: GrtcMiddleware[];
@@ -36,7 +41,7 @@ export function gRpcService(params?: {
       serviceName,
       protoFile,
       middlewares: params.middlewares || [],
-    } as GrpcService;
+    } as GrpcServiceMeta;
 
     Reflect.defineMetadata(sGrpcService, gRpcServiceMeta, target);
   } as ClassDecorator;

@@ -7,7 +7,7 @@ export type GrtcCallHandler = {
   (req: any, metadata: grpc.Metadata): any | Promise<any>;
 };
 
-export type GrpcService = {
+export type GrpcServiceMeta = {
   serviceName: string;
   protoFile: string;
   middlewares?: GrtcMiddleware[];
