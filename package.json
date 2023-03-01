@@ -4,10 +4,17 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/app/main.ts",
-    "prod": "node dist/app.prod.js",
-    "build:dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "ONE": "echo 'APP ONE'",
+    "one:dev": "nodemon -r tsconfig-paths/register src/app_one/main.ts",
+    "one:prod": "node dist/app_one.prod.js",
+    "one:build:dev": "webpack --env APP_BUILD_CONF=./src/app_one/_build.ts webpack --mode development",
+    "one:build": "webpack --env APP_BUILD_CONF=./src/app_one/_build.ts --mode production",
+    "TWO": "echo 'APP TWO'",
+    "two:dev": "nodemon -r tsconfig-paths/register src/app_two/main.ts",
+    "two:prod": "node dist/app_two.prod.js",
+    "two:build:dev": "webpack --env APP_BUILD_CONF=./src/app_two/_build.ts --mode development",
+    "two:build": "webpack --env APP_BUILD_CONF=./src/app_two/_build.ts --mode production",
+    "": "",
     "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/grpc/ grpc/*.proto"
   },
   "dependencies": {
