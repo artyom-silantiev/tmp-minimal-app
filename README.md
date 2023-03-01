@@ -11,17 +11,23 @@ yarn gen-grpc-types
 # run dev
 
 ```sh
-yarn dev
+yarn one:dev
+# or
+yarn two:dev
 ```
 
 # build
 
 ```sh
-yarn build
+yarn one:build
+# or
+yarn two:build
 ```
 
 # run prod
 
 ```sh
-yarn prod
+yarn one:prod
+# or
+yarn two:prod
 ```

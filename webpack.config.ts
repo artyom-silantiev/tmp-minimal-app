@@ -4,6 +4,7 @@ import nodeWebpack from 'webpack-node-externals';
 import 'webpack-dev-server';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import * as _ from 'lodash';
+import TerserPlugin from 'terser-webpack-plugin';
 
 export default (env, argv) => {
   if (!env.APP_BUILD_CONF) {
@@ -34,6 +35,15 @@ export default (env, argv) => {
           exclude: /node_modules/,
           loader: 'ts-loader',
         },
+      ],
+    },
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            keep_classnames: true,
+          },
+        }),
       ],
     },
   } as webpack.Configuration;

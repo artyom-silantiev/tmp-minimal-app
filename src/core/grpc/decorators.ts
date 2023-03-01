@@ -35,7 +35,7 @@ export function GrpcService(params?: {
       protoFileName += '.proto';
     }
 
-    const protoFile = resolve(__dirname, '../../../', 'grpc', protoFileName);
+    const protoFile = resolve(process.cwd(), 'grpc', protoFileName);
 
     const gRpcServiceMeta = {
       serviceName,

@@ -13,7 +13,7 @@ export class GrpcProto<TGrpcProto> {
       defaults: true,
       oneofs: true,
     };
-    const protoFile = resolve(__dirname, '../../../', 'grpc', protoFileName);
+    const protoFile = resolve(process.cwd(), 'grpc', protoFileName);
     const packageDefinition = protoLoader.loadSync(protoFile, options);
     const proto = grpc.loadPackageDefinition(packageDefinition) as any;
     this.proto = proto as TGrpcProto;

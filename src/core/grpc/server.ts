@@ -28,8 +28,9 @@ export function parseItemForGRPC(item: any) {
 
 export function onAppStart() {
   if (grpcServer) {
+    const port = process.env.NODE_GRTC_PORT || '8080';
     grpcServer.bindAsync(
-      '127.0.0.1:8080',
+      `127.0.0.1:${port}`,
       grpc.ServerCredentials.createInsecure(),
       (error, port) => {
         console.log(`gRPC server running at http://127.0.0.1:${port}`);

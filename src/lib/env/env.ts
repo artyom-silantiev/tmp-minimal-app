@@ -45,6 +45,7 @@ const NODE_APP_TYPE = toEnum(E.NODE_APP_TYPE, Object.values(NodeAppType), NodeAp
 export class Env {
   NODE_ENV = toEnum(E.NODE_ENV, Object.values(NodeEnvType), NodeEnvType.development) as NodeEnvType;
   NODE_PORT = toInt(E.NODE_PORT, 3000, true);
+  NODE_GRTC_PORT = toInt(E.NODE_GRTC_PORT, 8080, true);
   NODE_HOST = toString(E.NODE_HOST, 'localhost');
   NODE_PROTOCOL = toEnum(E.NODE_PROTOCOL, Object.values(Protocol), Protocol.http) as Protocol;
   NODE_APP_INDEX = NODE_APP_INDEX;
