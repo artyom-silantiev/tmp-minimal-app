@@ -7,6 +7,7 @@ import {
   GRPCall,
   GrpcCallType,
   GrpcServiceMeta,
+  GrtcMetadata,
   GrtcMiddleware,
 } from './types';
 
@@ -65,15 +66,17 @@ function useGrpcService<T>(
   const callsHandlers = {};
   calls.forEach((call) => {
     callsHandlers[call.callName] = async function (req, callback) {
+      const metadata = new GrtcMetadata(req.metadata);
+
       try {
         for (const middleware of globalMiddlewares) {
-          middleware(req.request, req.metadata);
+          middleware(req.request, metadata);
         }
         for (const middleware of serviceMiddlewares as GrtcMiddleware[]) {
-          middleware(req.request, req.metadata);
+          middleware(req.request, metadata);
         }
         for (const middleware of call.middlewares as GrtcMiddleware[]) {
-          middleware(req.request, req.metadata);
+          middleware(req.request, metadata);
         }
       } catch (error) {
         catchGrpcException(error, callback);
@@ -82,13 +85,13 @@ function useGrpcService<T>(
       const handler = service[call.key].bind(service);
       try {
         if (call.type === GrpcCallType.Method) {
-          const res = await handler(req.request, req.metadata);
+          const res = await handler(req.request, metadata);
           callback(null, res);
         } else if (call.type === GrpcCallType.StreamCall) {
-          const res = await handler(req, req.metadata);
+          const res = await handler(req, metadata);
           callback(null, res);
         } else if (call.type === GrpcCallType.StreamMethod) {
-          await handler(req, req.metadata);
+          await handler(req, metadata);
         }
       } catch (error) {
         catchGrpcException(error, callback);

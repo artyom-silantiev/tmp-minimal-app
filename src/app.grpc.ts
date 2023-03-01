@@ -5,7 +5,7 @@ import {
   GrpcStreamMethod,
 } from '@core/grpc/decorators';
 import { createGrpcClient } from '@core/grpc/client';
-import { GrtcMiddleware } from '@core/grpc/types';
+import { GrtcMetadata, GrtcMiddleware } from '@core/grpc/types';
 
 import { RpcException } from '@core/catch_rpc_error';
 import { validateDto } from '@core/validator';
@@ -21,12 +21,14 @@ import { ChatMsg, ChatMsg__Output } from '../grpc/ts/ChatMsg';
 
 const env = useEnv();
 
-const rtcAuthGuard: GrtcMiddleware = (req, metadata: grpc.Metadata) => {
+const rtcAuthGuard: GrtcMiddleware = (req, metadata: GrtcMetadata) => {
   metadata.get('access-token');
 
-  if (metadata.get('access-token')) {
-    metadata.set('userId', '1');
-    metadata.set('userName', 'Bob');
+  if (metadata.has('access-token')) {
+    metadata.set('user', {
+      userId: '1',
+      name: 'Bob',
+    });
   } else {
     throw new RpcException('Forbidden', grpc.status.UNAUTHENTICATED);
   }
@@ -69,11 +71,9 @@ export class AppGrpc {
   @GrpcMethod({
     middlewares: [rtcAuthGuard],
   })
-  async getProfile(call, meta: grpc.Metadata) {
-    return {
-      userId: meta.get('userId'),
-      name: meta.get('userName'),
-    };
+  async getProfile(call, meta: GrtcMetadata) {
+    console.log('meta', meta);
+    return meta.get('user');
   }
 
   @GrpcMethod()
