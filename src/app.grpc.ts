@@ -5,7 +5,7 @@ import {
   GrpcStreamMethod,
 } from '@core/grpc/decorators';
 import { createGrpcClient } from '@core/grpc/client';
-import { GrtcMetadata, GrtcMiddleware } from '@core/grpc/types';
+import { GrpcMetadata, GrpcMiddleware } from '@core/grpc/types';
 
 import { RpcException } from '@core/catch_rpc_error';
 import { validateDto } from '@core/validator';
@@ -21,7 +21,7 @@ import { ChatMsg, ChatMsg__Output } from '../grpc/ts/ChatMsg';
 
 const env = useEnv();
 
-const rtcAuthGuard: GrtcMiddleware = (req, metadata: GrtcMetadata) => {
+const rtcAuthGuard: GrpcMiddleware = (req, metadata: GrpcMetadata) => {
   metadata.get('access-token');
 
   if (metadata.has('access-token')) {
@@ -71,7 +71,7 @@ export class AppGrpc {
   @GrpcMethod({
     middlewares: [rtcAuthGuard],
   })
-  async getProfile(call, meta: GrtcMetadata) {
+  async getProfile(call, meta: GrpcMetadata) {
     console.log('meta', meta);
     return meta.get('user');
   }

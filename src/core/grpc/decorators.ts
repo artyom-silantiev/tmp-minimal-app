@@ -4,14 +4,14 @@ import {
   GRPCall,
   GrpcCallType,
   GrpcServiceMeta,
-  GrtcMiddleware,
+  GrpcMiddleware,
 } from './types';
 
 export const sGrpcService = Symbol('sGrpcService');
 export function GrpcService(params?: {
   protoFileName?: string;
   serviceName?: string;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 }) {
   return function (target: Function) {
     params = params || {};
@@ -55,7 +55,7 @@ function GrpcBaseDecorator(
   type: GrpcCallType,
   params?: {
     callName?: string;
-    middlewares?: GrtcMiddleware[];
+    middlewares?: GrpcMiddleware[];
   }
 ) {
   return function (
@@ -91,21 +91,21 @@ function GrpcBaseDecorator(
 
 export function GrpcMethod(params?: {
   callName?: string;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 }) {
   return GrpcBaseDecorator(GrpcCallType.Method, params);
 }
 
 export function GrpcStreamMethod(params?: {
   callName?: string;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 }) {
   return GrpcBaseDecorator(GrpcCallType.StreamMethod, params);
 }
 
 export function GrpcStreamCall(params?: {
   callName?: string;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 }) {
   return GrpcBaseDecorator(GrpcCallType.StreamCall, params);
 }

@@ -7,12 +7,12 @@ import {
   GRPCall,
   GrpcCallType,
   GrpcServiceMeta,
-  GrtcMetadata,
-  GrtcMiddleware,
+  GrpcMetadata,
+  GrpcMiddleware,
 } from './types';
 
 let grpcServer: grpc.Server;
-let globalMiddlewares = [] as GrtcMiddleware[];
+let globalMiddlewares = [] as GrpcMiddleware[];
 const logger = createLogger('gRPC');
 
 export function parseItemForGRPC(item: any) {
@@ -66,16 +66,16 @@ function useGrpcService<T>(
   const callsHandlers = {};
   calls.forEach((call) => {
     callsHandlers[call.callName] = async function (req, callback) {
-      const metadata = new GrtcMetadata(req.metadata);
+      const metadata = new GrpcMetadata(req.metadata);
 
       try {
         for (const middleware of globalMiddlewares) {
           middleware(req.request, metadata);
         }
-        for (const middleware of serviceMiddlewares as GrtcMiddleware[]) {
+        for (const middleware of serviceMiddlewares as GrpcMiddleware[]) {
           middleware(req.request, metadata);
         }
-        for (const middleware of call.middlewares as GrtcMiddleware[]) {
+        for (const middleware of call.middlewares as GrpcMiddleware[]) {
           middleware(req.request, metadata);
         }
       } catch (error) {
@@ -104,6 +104,6 @@ function useGrpcService<T>(
   grpcServer.addService(proto[serviceName].service, callsHandlers);
 }
 
-export function setGlobalRtcMiddlweares(middlewares: GrtcMiddleware[]) {
+export function setGlobalRtcMiddlweares(middlewares: GrpcMiddleware[]) {
   globalMiddlewares = middlewares;
 }

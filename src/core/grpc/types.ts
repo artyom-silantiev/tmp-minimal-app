@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 
-export class GrtcMetadata {
+export class GrpcMetadata {
   private metadata = {} as {
     [key: string]: any;
   };
@@ -26,17 +26,17 @@ export class GrtcMetadata {
   }
 }
 
-export type GrtcMiddleware = {
-  (req: any, metadata: GrtcMetadata): void;
+export type GrpcMiddleware = {
+  (req: any, metadata: GrpcMetadata): void;
 };
-export type GrtcCallHandler = {
-  (req: any, metadata: GrtcMetadata): any | Promise<any>;
+export type GrpcCallHandler = {
+  (req: any, metadata: GrpcMetadata): any | Promise<any>;
 };
 
 export type GrpcServiceMeta = {
   serviceName: string;
   protoFile: string;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 };
 
 export enum GrpcCallType {
@@ -48,5 +48,5 @@ export type GRPCall = {
   callName: string;
   type: GrpcCallType;
   key: string | symbol;
-  middlewares?: GrtcMiddleware[];
+  middlewares?: GrpcMiddleware[];
 };
