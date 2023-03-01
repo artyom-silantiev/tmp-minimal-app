@@ -5,7 +5,7 @@ service AppGrpc {
   rpc throw (Empty) returns (Empty) {}
   rpc login (LoginRequest) returns (LoginResponce) {}
   rpc getProfile (Empty) returns (Profile) {}
-  rpc startUpload(Empty) returns (Empty) {};
+  rpc startUpload(Empty) returns (UploadFileResponse) {};
   rpc uploadFile(stream UploadFileRequest) returns (UploadFileResponse) {};
 }
 

@@ -1,4 +1,4 @@
-import { onAppStart, parseItemForGRPC } from './grpc';
+import { onAppStart, parseItemForGRPC } from './grpc/server';
 import { defineModule, ModuleSetup, ModuleWrap } from './module';
 
 const modules = [] as ModuleWrap<unknown>[];
