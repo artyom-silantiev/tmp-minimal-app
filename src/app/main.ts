@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import bodyParser from 'body-parser';
-import { createAppLogger } from './lib/app_logger';
-import { useEnv } from './lib/env/env';
+import { createAppLogger } from '@lib/app_logger';
+import { useEnv } from '@lib/env/env';
 import routes from './routes';
 import express from 'express';
 import { initAppRouter } from '@core/router';

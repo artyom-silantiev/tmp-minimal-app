@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as _ from 'lodash';
-import { shSync } from 'lib/sh';
+import { shSync } from '@lib/sh';
 import * as fs from 'fs-extra';
 
 // set NODE_HOST if app running in docker container

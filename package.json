@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/main.ts",
+    "dev": "nodemon -r tsconfig-paths/register src/app/main.ts",
     "prod": "node dist/app.prod.js",
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",

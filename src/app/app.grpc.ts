@@ -12,12 +12,12 @@ import { ChatMsg, ChatMsg__Output } from '#grpc/ChatMsg';
 
 import { RpcException } from '@core/catch_rpc_error';
 import { validateDto } from '@core/validator';
-import { LoginDto } from 'app.controller';
+import { LoginDto } from 'app/app.controller';
 import * as grpc from '@grpc/grpc-js';
 import { resolve } from 'path';
 import * as fs from 'fs-extra';
-import { useEnv } from 'lib/env/env';
-import { holdBeforeFileExists } from 'lib';
+import { useEnv } from '@lib/env/env';
+import { holdBeforeFileExists } from 'app/lib';
 import { Stream } from 'stream';
 
 const env = useEnv();

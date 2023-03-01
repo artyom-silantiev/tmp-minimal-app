@@ -5,6 +5,7 @@
 ```sh
 cp .env.default .env
 yarn
+yarn gen-grpc-types
 ```
 
 # run dev
