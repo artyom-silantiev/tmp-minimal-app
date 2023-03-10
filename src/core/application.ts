@@ -1,11 +1,5 @@
 import { onAppStart, parseItemForGRPC } from './grpc/server';
-import { defineModule, ModuleSetup, ModuleWrap } from './module';
-
-const modules = [] as ModuleWrap<unknown>[];
-
-export function addAppModule<T>(moduleWrap: ModuleWrap<T>) {
-  modules.push(moduleWrap);
-}
+import { defineModule, ModuleSetup, modules } from './module';
 
 export async function createApp<T>(setup: ModuleSetup<T>) {
   const appModule = defineModule(setup);

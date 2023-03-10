@@ -1,6 +1,5 @@
 import express from 'express';
 import { getCtxHandlersFromController, Method } from './controller';
-import _ from 'lodash';
 import { createLogger } from './logger';
 
 const logger = createLogger('Router');
@@ -149,7 +148,7 @@ function useExpHandler(
 
   let path = '';
   if (routeHandler.path) {
-    if (!_.startsWith(routeHandler.path, '/') && routeHandler.path.length > 0) {
+    if (!routeHandler.path.startsWith('/') && routeHandler.path.length > 0) {
       routeHandler.path = '/' + routeHandler.path;
     }
     path = routeHandler.path;
@@ -170,12 +169,12 @@ function parseRoutes(
   path: string = '',
   level: number = 0
 ) {
-  if (!_.startsWith(path, '/')) {
+  if (!path.startsWith('/')) {
     path = '/' + path;
   }
 
   for (const route of routes) {
-    if (_.startsWith(route.path, '/')) {
+    if (route.path.startsWith('/')) {
       route.path = route.path.substring(1);
     }
 

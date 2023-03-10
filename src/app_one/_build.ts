@@ -1,11 +1,11 @@
-export default (env, argv) => {
+export default (argv) => {
   const mode = argv.mode;
   const isProd = mode === 'production';
 
   return {
-    entry: __dirname + '/main.ts',
+    input: __dirname + '/main.ts',
     output: {
-      filename: isProd ? 'app_one.prod.js' : 'app_one.dev.js',
+      file: `app_one.${isProd ? 'prod' : 'dev'}.ru.js`,
     },
   };
 };

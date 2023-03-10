@@ -1,4 +1,8 @@
-import { addAppModule } from './application';
+export const modules = [] as ModuleWrap<unknown>[];
+
+function addAppModule<T>(moduleWrap: ModuleWrap<T>) {
+  modules.push(moduleWrap);
+}
 
 type LifecycleHandler = () => Promise<void> | void;
 type ModuleMeta = {
