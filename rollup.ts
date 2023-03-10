@@ -1,10 +1,15 @@
-import { rollup, RollupOptions } from 'rollup';
+import { OutputOptions, rollup, RollupOptions } from 'rollup';
 import yargs from 'yargs';
 import * as _ from 'lodash';
 import { resolve } from 'path';
 
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+
+type AppBundleConfig = {
+  input: string;
+  outputBaseName: string;
+};
 
 async function build() {
   const argv = yargs(process.argv).argv;
@@ -22,35 +27,36 @@ async function build() {
     throw new Error('Argument "build_conf" is required');
   }
 
-  const buildConf = argv['build_conf'];
-  const res = require(buildConf).default;
-  const appBuildConfig = res(argv);
-  appBuildConfig.output.file = resolve(
-    __dirname,
-    'dist',
-    appBuildConfig.output.file
-  );
+  const isProd = mode === 'production';
 
-  const config = {
-    output: {
-      format: 'cjs',
-    },
+  const buildConf = argv['build_conf'];
+  const appBundleConfig = require(buildConf).default as AppBundleConfig;
+
+  const inputConfig = {
+    input: appBundleConfig.input,
     plugins: [typescript()],
   } as RollupOptions;
 
   if (mode === 'production') {
-    (config.plugins as any[]).push(
+    (inputConfig.plugins as any[]).push(
       terser({
         keep_classnames: true,
       })
     );
   }
 
-  const mergedConfig = _.merge(config, appBuildConfig);
+  const outputConfig = {
+    file: resolve(
+      __dirname,
+      'dist',
+      `${appBundleConfig.outputBaseName}${isProd ? '.min' : ''}.js`
+    ),
+    format: 'cjs',
+  } as OutputOptions;
 
   try {
-    const bundle = await rollup(mergedConfig);
-    await bundle.write(mergedConfig.output);
+    const bundle = await rollup(inputConfig);
+    await bundle.write(outputConfig);
     await bundle.close();
   } catch (error) {
     console.error(error);

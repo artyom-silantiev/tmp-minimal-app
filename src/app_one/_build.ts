@@ -1,11 +1,4 @@
-export default (argv) => {
-  const mode = argv.mode;
-  const isProd = mode === 'production';
-
-  return {
-    input: __dirname + '/main.ts',
-    output: {
-      file: `app_one.${isProd ? 'prod' : 'dev'}.js`,
-    },
-  };
+export default {
+  input: __dirname + '/main.ts',
+  outputBaseName: 'app_one',
 };
