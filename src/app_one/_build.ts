@@ -5,7 +5,7 @@ export default (argv) => {
   return {
     input: __dirname + '/main.ts',
     output: {
-      file: `app_one.${isProd ? 'prod' : 'dev'}.ru.js`,
+      file: `app_one.${isProd ? 'prod' : 'dev'}.js`,
     },
   };
 };
