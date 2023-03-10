@@ -18,6 +18,10 @@ async function build() {
     }
   }
 
+  if (!argv['build_conf']) {
+    throw new Error('Argument "build_conf" is required');
+  }
+
   const buildConf = argv['build_conf'];
   const res = require(buildConf).default;
   const appBuildConfig = res(argv);
@@ -46,7 +50,7 @@ async function build() {
 
   try {
     const bundle = await rollup(mergedConfig);
-    const res = await bundle.write(mergedConfig.output);
+    await bundle.write(mergedConfig.output);
     await bundle.close();
   } catch (error) {
     console.error(error);
