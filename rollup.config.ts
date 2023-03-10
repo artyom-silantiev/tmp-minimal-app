@@ -1,5 +1,4 @@
 import { RollupOptions } from 'rollup';
-import yargs from 'yargs';
 import * as _ from 'lodash';
 import { resolve } from 'path';
 import apps from './rollup.apps';
