@@ -8,9 +8,9 @@
     "strictPropertyInitialization": false,
     "strict": true,
     "sourceMap": true,
-    "target": "ES2021",
+    "target": "ES2022",
     "moduleResolution": "node",
-    "lib": ["ES2021"],
+    "lib": ["ES2022"],
     "baseUrl": "src",
     "paths": {
       "@lib/*": ["lib/*"],

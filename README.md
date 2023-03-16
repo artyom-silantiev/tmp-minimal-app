@@ -16,20 +16,10 @@ yarn dev:one
 yarn dev:two
 ```
 
-# build for dev
+# build
 
 ```sh
-yarn build:all:dev
-# or
-yarn build:one:dev
-# or
-yarn build:two:dev
-```
-
-# build for prod
-
-```sh
-yarn build:all
+yarn build
 # or
 yarn build:one
 # or
