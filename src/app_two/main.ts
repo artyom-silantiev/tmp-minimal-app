@@ -3,11 +3,11 @@ import bodyParser from 'body-parser';
 import { createAppLogger } from '@lib/app_logger';
 import { useEnv } from '@lib/env/env';
 import express from 'express';
-import { createApp } from '@core/application';
+import { defineApplication } from '@core/application';
 
 const logger = createAppLogger('App');
 
-createApp((ctx) => {
+defineApplication((ctx) => {
   const env = useEnv();
   const app = express();
 
@@ -28,4 +28,4 @@ createApp((ctx) => {
       logger.log(`app listen port: ${env.NODE_PORT}`);
     });
   });
-});
+}).run();

@@ -1,8 +1,7 @@
 import { IsString, MinLength } from 'class-validator';
-import { Controller, Get } from '@core/controller';
-import { Ctx } from '@core/router';
-import { HttpException } from '@core/catch_http_error';
+import { Ctx } from '@core/router/router';
 import { validateDto } from '@core/validator';
+import { Controller, Get, HttpException } from '@core/router';
 
 export class LoginDto {
   @IsString()

@@ -1,6 +1,6 @@
 import express from 'express';
-import { getCtxHandlersFromController, Method } from './controller';
-import { createLogger } from './logger';
+import { getCtxHandlersFromController, Method } from '../router/controller';
+import { createLogger } from '../logger';
 
 const logger = createLogger('Router');
 

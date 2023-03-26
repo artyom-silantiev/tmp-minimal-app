@@ -1,5 +1,5 @@
 import * as grpc from '@grpc/grpc-js';
-import { ValidateException } from './validator';
+import { ValidateException } from '../validator';
 
 export class GrpcException extends Error {
   constructor(public message: string | any, public status: grpc.status) {

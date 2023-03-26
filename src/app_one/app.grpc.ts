@@ -10,7 +10,7 @@ import { ProtoGrpcType as AppGrpcProto } from '#grpc/app_grpc';
 import { AppGrpcClient } from '#grpc/AppGrpc';
 import { ChatMsg, ChatMsg__Output } from '#grpc/ChatMsg';
 
-import { GrpcException } from '@core/catch_grpc_error';
+import { GrpcException } from '@core/grpc/catch_grpc_error';
 import { validateDto } from '@core/validator';
 import { LoginDto } from './app.controller';
 import * as grpc from '@grpc/grpc-js';

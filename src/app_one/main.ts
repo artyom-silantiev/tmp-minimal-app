@@ -4,13 +4,12 @@ import { createAppLogger } from '@lib/app_logger';
 import { useEnv } from '@lib/env/env';
 import routes from './routes';
 import express from 'express';
-import { initAppRouter } from '@core/router';
-import { catchHttpException } from '@core/catch_http_error';
-import { createApp } from '@core/application';
+import { catchHttpException, initAppRouter } from '@core/router';
+import { defineApplication } from '@core/application';
 
 const logger = createAppLogger('App');
 
-createApp((ctx) => {
+const application = defineApplication((ctx) => {
   const env = useEnv();
   const app = express();
 
@@ -27,3 +26,5 @@ createApp((ctx) => {
     });
   });
 });
+
+application.run();

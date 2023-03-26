@@ -1,5 +1,5 @@
 import express from 'express';
-import { ValidateException } from './validator';
+import { ValidateException } from '../validator';
 
 export class HttpException extends Error {
   constructor(public message: string | any, public status: number) {
