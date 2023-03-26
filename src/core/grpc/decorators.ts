@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { camelToSnake } from '../lib';
 import {
   GRPCall,
   GrpcCallType,
@@ -7,48 +6,35 @@ import {
   GrpcMiddleware,
 } from './types';
 
+// GrpcService decorator
 export const sGrpcService = Symbol('sGrpcService');
-export function GrpcService(params?: {
-  protoFileName?: string;
-  serviceName?: string;
-  middlewares?: GrpcMiddleware[];
-}) {
+export function GrpcService(protoFileName: string, serviceName: string) {
   return function (target: Function) {
-    params = params || {};
-
-    let serviceName = params.serviceName;
-    if (!serviceName) {
-      serviceName = target.name;
-    }
-
-    let protoFileName = params.protoFileName;
-    if (!protoFileName) {
-      let m = serviceName.match(/^(\w*)(Service){1}/);
-      if (m) {
-        protoFileName = camelToSnake(m[1]) + '.service';
-      } else {
-        protoFileName = camelToSnake(serviceName);
-      }
-    }
-
-    if (!protoFileName.endsWith('.proto')) {
-      protoFileName += '.proto';
-    }
-
     const protoFile = resolve(process.cwd(), 'grpc', protoFileName);
 
-    const gRpcServiceMeta = {
-      serviceName,
-      protoFile,
-      middlewares: params.middlewares || [],
-    } as GrpcServiceMeta;
+    if (!Reflect.hasMetadata(sGrpcService, target)) {
+      Reflect.defineMetadata(sGrpcService, {}, target);
+    }
+    const gRpcServiceMeta = Reflect.getMetadata(sGrpcService, target);
 
-    Reflect.defineMetadata(sGrpcService, gRpcServiceMeta, target);
+    gRpcServiceMeta.serviceName = serviceName;
+    gRpcServiceMeta.protoFile = protoFile;
   } as ClassDecorator;
 }
 
-//
+// GrpcServiceMiddlewares decorator
+export function GrpcServiceMiddlewares(middlewares: GrpcMiddleware[]) {
+  return function (target: Function) {
+    if (!Reflect.hasMetadata(sGrpcService, target)) {
+      Reflect.defineMetadata(sGrpcService, {}, target);
+    }
+    const gRpcServiceMeta = Reflect.getMetadata(sGrpcService, target);
 
+    gRpcServiceMeta.middlewares = middlewares;
+  } as ClassDecorator;
+}
+
+// GrpcCall's decorators
 export const sGrpcCall = Symbol('gRPC_Call');
 
 function GrpcBaseDecorator(

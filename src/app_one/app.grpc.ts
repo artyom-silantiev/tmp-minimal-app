@@ -35,7 +35,7 @@ const rtcAuthGuard: GrpcMiddleware = (req, metadata: GrpcMetadata) => {
   }
 };
 
-@GrpcService()
+@GrpcService('app_grpc.proto', 'AppGrpc')
 export class AppGrpc {
   client: AppGrpcClient;
 
