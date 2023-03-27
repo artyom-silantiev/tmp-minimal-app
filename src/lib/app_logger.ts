@@ -1,17 +1,17 @@
-import { Logger } from '@core/logger';
+import { LogLevel, Logger, setGlobalLogLevel } from '@core/logger';
 import { useEnv } from './env/env';
 
 const isDev = useEnv().isDevEnv();
 
+if (isDev) {
+  setGlobalLogLevel(LogLevel.TRACE);
+} else {
+  setGlobalLogLevel(LogLevel.INFO);
+}
+
 export class AppLogger extends Logger {
   constructor(name: string) {
-    super(name);
-  }
-
-  debug(...args: any) {
-    if (isDev) {
-      console.log(this.prefix(), ...args);
-    }
+    super({ name });
   }
 }
 
