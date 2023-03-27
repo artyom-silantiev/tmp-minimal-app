@@ -1,9 +1,7 @@
 import { LogLevel, Logger, setGlobalLogLevel } from '@core/logger';
 import { useEnv } from './env/env';
 
-const isDev = useEnv().isDevEnv();
-
-if (isDev) {
+if (useEnv().isDevEnv()) {
   setGlobalLogLevel(LogLevel.TRACE);
 } else {
   setGlobalLogLevel(LogLevel.INFO);
