@@ -1,10 +1,5 @@
 import { resolve } from 'path';
-import {
-  GRPCall,
-  GrpcCallType,
-  GrpcServiceMeta,
-  GrpcMiddleware,
-} from './types';
+import { GRPCall, GrpcCallType, GrpcMiddleware } from './types';
 
 // GrpcService decorator
 export const sGrpcService = Symbol('sGrpcService');

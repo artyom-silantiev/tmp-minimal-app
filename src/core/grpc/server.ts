@@ -55,7 +55,7 @@ function useGrpcService<T>(
     enums: String,
     defaults: true,
     oneofs: true,
-  };
+  } as protoLoader.Options;
   const { protoFile, serviceName } = grpcServiceMeta;
   const serviceMiddlewares = grpcServiceMeta.middlewares;
 
@@ -70,14 +70,14 @@ function useGrpcService<T>(
       const metadata = new GrpcMetadata(req.metadata);
 
       try {
-        for (const middleware of globalMiddlewares) {
-          middleware(req.request, metadata);
+        for (const midd of globalMiddlewares) {
+          midd(req.request, metadata);
         }
-        for (const middleware of serviceMiddlewares as GrpcMiddleware[]) {
-          middleware(req.request, metadata);
+        for (const midd of (serviceMiddlewares || []) as GrpcMiddleware[]) {
+          midd(req.request, metadata);
         }
-        for (const middleware of call.middlewares as GrpcMiddleware[]) {
-          middleware(req.request, metadata);
+        for (const midd of (call.middlewares || []) as GrpcMiddleware[]) {
+          midd(req.request, metadata);
         }
       } catch (error) {
         catchGrpcException(error, callback);
