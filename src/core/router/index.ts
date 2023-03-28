@@ -1,3 +1,3 @@
 export * from './router';
-export * from './controller';
+export * from './decorators';
 export * from './catch_http_error';

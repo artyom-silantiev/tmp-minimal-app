@@ -18,10 +18,11 @@ export type ModuleWrap<T> = {
 
 function getModuleSetupCtx(meta: ModuleMeta) {
   return {
-    use<T>(factory: () => T) {
-      const item = factory();
-      meta.items.push(item);
-      return item;
+    useItems<T extends Object>(items: T) {
+      for (const item of Object.values(items)) {
+        meta.items.push(item);
+      }
+      return items;
     },
     onModuleInit(handler: LifecycleHandler) {
       meta.initHandler = handler;

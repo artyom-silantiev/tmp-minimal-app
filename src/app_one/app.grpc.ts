@@ -1,5 +1,6 @@
 import {
   GrpcMethod,
+  GrpcMiddlewares,
   GrpcService,
   GrpcStreamCall,
   GrpcStreamMethod,
@@ -70,9 +71,8 @@ export class AppGrpc {
     };
   }
 
-  @GrpcMethod({
-    middlewares: [rtcAuthGuard],
-  })
+  @GrpcMethod()
+  @GrpcMiddlewares([rtcAuthGuard])
   async getProfile(call, meta: GrpcMetadata) {
     console.log('meta', meta);
     return meta.get('user');

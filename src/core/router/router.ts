@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCtxHandlersFromController, Method } from '../router/controller';
+import { getCtxHandlersFromController, Method } from './decorators';
 import { createLogger } from '../logger';
 
 const logger = createLogger('Router');
