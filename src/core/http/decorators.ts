@@ -1,11 +1,10 @@
 import { metadata } from '@core/metadata';
-import { CtxHandler, RouteHandler } from './router';
+import { HttpHandler, CtxHandler, Method, RouteHandler } from './types';
 
 const sHttp = Symbol('sHttp');
 const sHttpMiddlewares = Symbol('sHttpMiddlewares');
 const sHttpHandlers = Symbol('sHttpHandlers');
 const sHttpHandler = Symbol('sHttpHandler');
-const sHttpHandlerMiddlewares = Symbol('sHttpHandlerMiddlewares');
 
 // Controller decorator
 
@@ -16,12 +15,12 @@ export function Controller() {
 }
 
 // CtxMiddlewares decorator
-export function CtxMiddlewares(middlewares: CtxHandler[]) {
+export function HttpMiddlewares(middlewares: CtxHandler[]) {
   return function (target: any, key?: string | symbol) {
     if (key) {
       // method decorator
       metadata.set(
-        [target.constructor, sHttpHandlers, key, sHttpHandlerMiddlewares],
+        [target.constructor, sHttpHandlers, key, sHttpMiddlewares],
         middlewares
       );
     } else {
@@ -32,21 +31,6 @@ export function CtxMiddlewares(middlewares: CtxHandler[]) {
 }
 
 // Controller methods decorators
-export type Method =
-  | 'USE'
-  | 'ALL'
-  | 'GET'
-  | 'HEAD'
-  | 'OPTIONS'
-  | 'PATCH'
-  | 'POST'
-  | 'PUT'
-  | 'DELETE';
-type ControllerHandler = {
-  method: Method;
-  path: string;
-  key: string | symbol;
-};
 
 function httpHandler(method: Method, path: string) {
   return function (target: Object, key: string | symbol) {
@@ -54,8 +38,7 @@ function httpHandler(method: Method, path: string) {
       method,
       path,
       key,
-      ctxMiddlewares: [],
-    } as ControllerHandler);
+    } as HttpHandler);
   } as MethodDecorator;
 }
 
@@ -93,9 +76,9 @@ export function Delete(path: string = '') {
 
 // controller metadata parser
 
-export function getCtxHandlersFromController(controller: Object) {
+export function parseController(controller: Object) {
   if (!metadata.has([controller.constructor, sHttp])) {
-    return [] as RouteHandler[];
+    return null;
   }
 
   const httpHandlers = metadata.get([
@@ -103,29 +86,41 @@ export function getCtxHandlersFromController(controller: Object) {
     sHttpHandlers,
   ]) as Map<string, any>;
 
+  const controllerMiddlewares = metadata.get([
+    controller.constructor,
+    sHttpMiddlewares,
+  ]) as CtxHandler[];
+
   if (!httpHandlers || httpHandlers.size === 0) {
-    return [] as RouteHandler[];
+    return null;
   }
 
   const routeHandlers = [] as RouteHandler[];
 
-  for (const key of httpHandlers.keys()) {
-    const httpHandler = metadata.get([
-      controller.constructor,
-      sHttpHandlers,
-      key,
-      sHttpHandler,
-    ]) as ControllerHandler;
+  for (const [key, map] of httpHandlers) {
+    const httpHandler = map.get(sHttpHandler) as HttpHandler;
+
+    if (!httpHandler) {
+      continue;
+    }
+
+    const sHttpHandlerMiddlewares = map.get(sHttpMiddlewares) as CtxHandler[];
 
     const ctxHandler = controller[key].bind(controller) as CtxHandler;
 
-    const routeCtxHandler = {
+    const routeHandler = {
       method: httpHandler.method,
       path: httpHandler.path,
-      ctxHandler: ctxHandler,
+      handler: ctxHandler,
+      middlewares: sHttpHandlerMiddlewares
+        ? sHttpHandlerMiddlewares
+        : undefined,
+      controllerMiddlewares: controllerMiddlewares
+        ? controllerMiddlewares
+        : undefined,
     } as RouteHandler;
 
-    routeHandlers.push(routeCtxHandler);
+    routeHandlers.push(routeHandler);
   }
 
   return routeHandlers;

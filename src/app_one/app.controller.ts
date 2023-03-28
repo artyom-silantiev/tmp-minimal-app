@@ -1,7 +1,9 @@
 import { IsString, MinLength } from 'class-validator';
-import { Ctx } from '@core/http/router';
 import { validateDto } from '@core/validator';
-import { Controller, Get, HttpException } from '@core/http';
+import { Controller, Get, HttpException, HttpMiddlewares } from '@core/http';
+import { Ctx } from '@core/http/types';
+import { AppCtx } from './types';
+import { AuthGuard } from './guards';
 
 export class LoginDto {
   @IsString()
@@ -47,6 +49,17 @@ export class AppController {
 
     return {
       accessToken: (Math.random() * 1e6 + 1e6).toString(32),
+    };
+  }
+
+  @Get('user/profile')
+  @HttpMiddlewares([AuthGuard])
+  getProfile(ctx: AppCtx) {
+    const user = ctx.req.user;
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
     };
   }
 }
