@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { onAppStart, parseItemForGRPC } from './grpc/server';
 import { defineModule, ModuleSetup, modules } from './module';
 import { useCronService } from './cron';

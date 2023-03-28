@@ -1,4 +1,4 @@
-import { Route } from '@core/router/router';
+import { Route } from '@core/http/router';
 import { AppModule } from './app.module';
 import { AuthGuard } from './guards';
 import { AppCtx } from './types';

@@ -1,10 +1,9 @@
-import 'reflect-metadata';
 import bodyParser from 'body-parser';
 import { createAppLogger } from '@lib/app_logger';
 import { useEnv } from '@lib/env/env';
 import routes from './routes';
 import express from 'express';
-import { catchHttpException, initAppRouter } from '@core/router';
+import { catchHttpException, initAppRouter } from '@core/http';
 import { defineApplication } from '@core/application';
 
 const logger = createAppLogger('App');
