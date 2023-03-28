@@ -15,7 +15,7 @@
     "prod:two": "node dist/two.js",
     "build:two": "BUILD_APP=two tsup-node --config tsup.config.ts",
     "": "",
-    "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/grpc/ grpc/*.proto"
+    "gen-grpc-types": "npx proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=grpc/_types/ grpc/*.proto"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

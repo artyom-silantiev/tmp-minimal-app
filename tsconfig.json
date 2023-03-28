@@ -11,11 +11,11 @@
     "target": "ES2022",
     "moduleResolution": "node",
     "lib": ["ES2022"],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@lib/*": ["lib/*"],
-      "@core/*": ["core/*"],
-      "#grpc/*": ["grpc/*"]
+      "@lib/*": ["src/lib/*"],
+      "@core/*": ["src/core/*"],
+      "#grpc/*": ["grpc/_types/*"]
     }
   },
   "exclude": ["node_modules"],
