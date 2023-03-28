@@ -1,4 +1,4 @@
-import { HttpException } from '@core/http/catch_http_error';
+import { HttpException } from '@core/http/exception';
 import { AppCtx } from './types';
 
 export function AuthGuard(ctx: AppCtx) {

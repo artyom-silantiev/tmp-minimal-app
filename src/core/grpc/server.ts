@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
-import { catchGrpcException } from './catch_grpc_error';
+import { catchGrpcException } from './exception';
 import { createLogger } from '../logger';
 import {
   GRPCall,
