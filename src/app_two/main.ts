@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import { createAppLogger } from '@lib/app_logger';
 import { useEnv } from '@lib/env/env';
 import express from 'express';
-import { defineApplication } from '@core/application';
+import { defineApplication } from 'minimal2b/application';
 
 const logger = createAppLogger('App');
 

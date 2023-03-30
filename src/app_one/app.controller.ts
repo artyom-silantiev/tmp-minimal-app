@@ -1,9 +1,14 @@
 import { IsString, MinLength } from 'class-validator';
-import { validateDto } from '@core/validator';
-import { Controller, Get, HttpException, HttpMiddlewares } from '@core/http';
-import { Ctx } from '@core/http/types';
 import { AppCtx } from './types';
 import { AuthGuard } from './guards';
+import {
+  Controller,
+  Ctx,
+  Get,
+  HttpException,
+  HttpMiddlewares,
+} from 'minimal2b/http';
+import { validateDto } from 'minimal2b/validator';
 
 export class LoginDto {
   @IsString()

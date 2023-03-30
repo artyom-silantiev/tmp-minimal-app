@@ -14,7 +14,6 @@
     "baseUrl": ".",
     "paths": {
       "@lib/*": ["src/lib/*"],
-      "@core/*": ["src/core/*"],
       "#grpc/*": ["grpc/_types/*"]
     }
   },

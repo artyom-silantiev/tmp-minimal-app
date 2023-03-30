@@ -1,4 +1,4 @@
-import { Route } from '@core/http/types';
+import { Route } from 'minimal2b/http';
 import { AppModule } from './app.module';
 
 export default [

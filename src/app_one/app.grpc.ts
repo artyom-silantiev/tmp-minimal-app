@@ -1,18 +1,7 @@
-import {
-  GrpcMethod,
-  GrpcMiddlewares,
-  GrpcService,
-  GrpcStreamCall,
-  GrpcStreamMethod,
-} from '@core/grpc/decorators';
-import { GrpcProto } from '@core/grpc/client';
-import { GrpcMetadata, GrpcMiddleware } from '@core/grpc/types';
 import { ProtoGrpcType as AppGrpcProto } from '#grpc/app_grpc';
 import { AppGrpcClient } from '#grpc/AppGrpc';
 import { ChatMsg, ChatMsg__Output } from '#grpc/ChatMsg';
 
-import { GrpcException } from '@core/grpc/exception';
-import { validateDto } from '@core/validator';
 import { LoginDto } from './app.controller';
 import * as grpc from '@grpc/grpc-js';
 import { resolve } from 'path';
@@ -20,6 +9,18 @@ import * as fs from 'fs-extra';
 import { useEnv } from '@lib/env/env';
 import { holdBeforeFileExists } from './lib';
 import { Stream } from 'stream';
+import {
+  GrpcException,
+  GrpcMetadata,
+  GrpcMethod,
+  GrpcMiddleware,
+  GrpcMiddlewares,
+  GrpcProto,
+  GrpcService,
+  GrpcStreamCall,
+  GrpcStreamMethod,
+} from 'minimal2b/grpc';
+import { validateDto } from 'minimal2b/validator';
 
 const env = useEnv();
 

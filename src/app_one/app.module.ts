@@ -1,7 +1,7 @@
-import { defineModule } from '@core/module';
 import { AppGrpc } from './app.grpc';
 import { AppController } from './app.controller';
 import { AppCronService } from './app_cron.service';
+import { defineModule } from 'minimal2b/module';
 
 export const AppModule = defineModule((ctx) => {
   const appController = new AppController();
