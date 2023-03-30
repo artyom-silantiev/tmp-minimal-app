@@ -24,6 +24,16 @@ const application = defineApplication((ctx) => {
       logger.log(`app listen port: ${env.NODE_PORT}`);
     });
   });
+
+  ctx.onModuleDestroy(async () => {
+    console.log('onModuleDestroy');
+    const msg = await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve('exit');
+      }, 50);
+    });
+    console.log(msg);
+  });
 });
 
 application.run();
