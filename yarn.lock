@@ -790,7 +790,7 @@ create-require@^1.1.0:
   resolved "https://registry.npmjs.org/create-require/-/create-require-1.1.1.tgz"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-cron@^2.2.0:
+cron@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/cron/-/cron-2.3.0.tgz#20df6da18d4f7d2f8937def2eb5fc0d1a320c526"
   integrity sha512-ZN5HP8zDY41sJolMsbc+GksRATcbvkPKF5wR/qc8FrV4NBVi9ORQa1HmYa5GydaysUB80X9XpRlRkooa5uEtTA==
@@ -1595,15 +1595,15 @@ mimic-fn@^2.1.0:
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-2.1.0.tgz"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
-minimal2b@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/minimal2b/-/minimal2b-0.1.3.tgz#0f6e0fa837ead77c58ee1892e752a2463e0dbf48"
-  integrity sha512-oj2gHWq5AYKKgD9tXCJU/wTgfSZgGchyXzdmgEj8WTg/jPrC2CgL5hQ2zeRLsNoN+9wypwdrNOfXjoJuEO11IA==
+minimal2b@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/minimal2b/-/minimal2b-0.1.6.tgz#331a39d3bdb89e05407db957131d2c9176ad5c70"
+  integrity sha512-utberhoHZWDPtPlYKvCY5ChnVesefKNU+bPaTc9r4oEJZWaOQBCQXWdB230k0rmKPwqXE5o+ZDKyeQ7imI+t8A==
   dependencies:
     "@grpc/grpc-js" "^1.8.13"
     body-parser "^1.20.2"
     class-validator "^0.14.0"
-    cron "^2.2.0"
+    cron "^2.3.0"
     express "^4.18.2"
     moment "^2.29.4"
 
